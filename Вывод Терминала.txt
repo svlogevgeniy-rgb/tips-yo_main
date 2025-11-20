@@ -1,0 +1,212 @@
+Last login: Thu Nov 20 14:13:12 on ttys013
+evgenijsolovev@MacBook-Air-Evgenij ~ % ssh root91.222.236.239
+ssh: Could not resolve hostname root91.222.236.239: nodename nor servname provided, or not known
+evgenijsolovev@MacBook-Air-Evgenij ~ % ssh root@91.222.236.239
+root@91.222.236.239's password: 
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-87-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Thu Nov 20 11:30:16 UTC 2025
+
+  System load:  0.05              Processes:             172
+  Usage of /:   2.1% of 95.82GB   Users logged in:       0
+  Memory usage: 2%                IPv4 address for eth0: 91.222.236.239
+  Swap usage:   0%                IPv6 address for eth0: 2a03:6f01:1:2::1:65e6
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+Last login: Thu Nov 20 11:25:39 2025 from 91.222.236.239
+root@5956121-rn49935:~# cd /opt/tipsyo
+root@5956121-rn49935:/opt/tipsyo# npm ci
+
+added 181 packages, and audited 182 packages in 4s
+
+38 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+root@5956121-rn49935:/opt/tipsyo# npm run build
+
+> tips-landing@0.0.0 build
+> tsc && vite build
+
+vite v5.4.21 building for production...
+✓ 1380 modules transformed.
+dist/index.html                   0.50 kB │ gzip:  0.37 kB
+dist/assets/index-C4oh6neZ.css   18.34 kB │ gzip:  4.29 kB
+dist/assets/index-D1wzlnug.js   219.21 kB │ gzip: 70.55 kB
+✓ built in 3.35s
+root@5956121-rn49935:/opt/tipsyo# pm2 serve ./dist 4173 --name tipsyo-landing --spa
+
+                        -------------
+
+__/\\\\\\\\\\\\\____/\\\\____________/\\\\____/\\\\\\\\\_____
+ _\/\\\/////////\\\_\/\\\\\\________/\\\\\\__/\\\///////\\\___
+  _\/\\\_______\/\\\_\/\\\//\\\____/\\\//\\\_\///______\//\\\__
+   _\/\\\\\\\\\\\\\/__\/\\\\///\\\/\\\/_\/\\\___________/\\\/___
+    _\/\\\/////////____\/\\\__\///\\\/___\/\\\________/\\\//_____
+     _\/\\\_____________\/\\\____\///_____\/\\\_____/\\\//________
+      _\/\\\_____________\/\\\_____________\/\\\___/\\\/___________
+       _\/\\\_____________\/\\\_____________\/\\\__/\\\\\\\\\\\\\\\_
+        _\///______________\///______________\///__\///////////////__
+
+
+                          Runtime Edition
+
+        PM2 is a Production Process Manager for Node.js applications
+                     with a built-in Load Balancer.
+
+                Start and Daemonize any application:
+                $ pm2 start app.js
+
+                Load Balance 4 instances of api.js:
+                $ pm2 start api.js -i 4
+
+                Monitor in production:
+                $ pm2 monitor
+
+                Make pm2 auto-boot at server restart:
+                $ pm2 startup
+
+                To go further checkout:
+                http://pm2.io/
+
+
+                        -------------
+
+[PM2] Spawning PM2 daemon with pm2_home=/root/.pm2
+[PM2] PM2 Successfully daemonized
+[PM2] Starting /usr/lib/node_modules/pm2/lib/API/Serve.js in fork_mode (1 instance)
+[PM2] Done.
+[PM2] Serving /opt/tipsyo/dist on port 4173
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ tipsyo-landing     │ fork     │ 0    │ online    │ 0%       │ 34.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@5956121-rn49935:/opt/tipsyo# pm2 save
+[PM2] Saving current process list...
+[PM2] Successfully saved in /root/.pm2/dump.pm2
+root@5956121-rn49935:/opt/tipsyo# pm2 startup systemd
+[PM2] Init System found: systemd
+Platform systemd
+Template
+[Unit]
+Description=PM2 process manager
+Documentation=https://pm2.keymetrics.io/
+After=network.target
+
+[Service]
+Type=forking
+User=root
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+Environment=PM2_HOME=/root/.pm2
+PIDFile=/root/.pm2/pm2.pid
+Restart=on-failure
+
+ExecStart=/usr/lib/node_modules/pm2/bin/pm2 resurrect
+ExecReload=/usr/lib/node_modules/pm2/bin/pm2 reload all
+ExecStop=/usr/lib/node_modules/pm2/bin/pm2 kill
+
+[Install]
+WantedBy=multi-user.target
+
+Target path
+/etc/systemd/system/pm2-root.service
+Command list
+[ 'systemctl enable pm2-root' ]
+[PM2] Writing init configuration in /etc/systemd/system/pm2-root.service
+[PM2] Making script booting at startup...
+[PM2] [-] Executing: systemctl enable pm2-root...
+Created symlink /etc/systemd/system/multi-user.target.wants/pm2-root.service → /etc/systemd/system/pm2-root.service.
+[PM2] [v] Command successfully executed.
++---------------------------------------+
+[PM2] Freeze a process list on reboot via:
+$ pm2 save
+
+[PM2] Remove init script via:
+$ pm2 unstartup systemd
+root@5956121-rn49935:/opt/tipsyo# nano /etc/nginx/sites-available/tipsyo
+
+  GNU nano 7.2                                                                           /etc/nginx/sites-available/tipsyo *                                                                                   
+server {
+      listen 80;
+      server_name 91.222.236.239;  # или ваш домен
+
+      location / {
+          proxy_pass http://127.0.0.1:4173;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+^G Help          ^O Write Out     ^W Where Is      ^K Cut           ^T Execute       ^C Location      M-U Undo         M-A Set Mark     M-] To Bracket   M-Q Previous     ^B Back          ^◂ Prev Word
+^X Exit          ^R Read File     ^\ Replace       ^U Paste         ^J Justify       ^/ Go To Line    M-E Redo         M-6 Copy         ^Q Where Was     M-W Next         ^F Forward       ^▸ Next Word

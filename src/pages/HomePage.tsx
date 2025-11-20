@@ -33,31 +33,40 @@ export const HomePage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-primary shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <span className="text-2xl font-bold text-primary">tipsyo</span>
+          <div className="flex items-center justify-between h-16 md:h-20">
+            {/* Logo and Brand */}
+            <div className="flex items-center gap-3">
+              <img 
+                src="/images/Logo.svg" 
+                alt="Tips'yo Logo" 
+                className="h-8 md:h-10 w-auto"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/images/Logo.png';
+                }}
+              />
+              <span className="text-xl md:text-2xl font-bold text-white">Tips'yo</span>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
               <button
                 onClick={() => scrollToSection('for-whom')}
-                className="text-gray-700 hover:text-primary transition-colors"
+                className="text-white/90 hover:text-white transition-colors font-medium"
               >
                 Для кого
               </button>
               <button
                 onClick={() => scrollToSection('how-it-works')}
-                className="text-gray-700 hover:text-primary transition-colors"
+                className="text-white/90 hover:text-white transition-colors font-medium"
               >
                 Как работает
               </button>
               <button
                 onClick={() => scrollToSection('pricing')}
-                className="text-gray-700 hover:text-primary transition-colors"
+                className="text-white/90 hover:text-white transition-colors font-medium"
               >
                 Сколько стоит
               </button>
@@ -65,10 +74,16 @@ export const HomePage = () => {
 
             {/* Desktop CTA Buttons */}
             <div className="hidden md:flex items-center space-x-4">
-              <Button variant="outline" onClick={handleThankClick}>
+              <Button 
+                variant="outline" 
+                onClick={handleThankClick}
+                className="border-2 border-white text-white hover:bg-white hover:text-primary"
+              >
                 Поблагодарить
               </Button>
-              <Button>Начать пользоваться</Button>
+              <Button className="bg-white text-primary hover:bg-white/90">
+                Начать пользоваться
+              </Button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -76,7 +91,7 @@ export const HomePage = () => {
               className="md:hidden p-2"
               onClick={() => setMobileMenuOpen(true)}
             >
-              <Menu className="h-6 w-6 text-gray-700" />
+              <Menu className="h-6 w-6 text-white" />
             </button>
           </div>
         </div>
@@ -119,30 +134,91 @@ export const HomePage = () => {
       </Sheet>
 
       {/* Hero Section */}
-      <section className="bg-primary text-white pt-32 pb-20 md:py-32 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Благодарность, подарки<br />и <span className="italic">чаевые</span> безналично
-          </h1>
-          <p className="text-lg md:text-xl mb-8 text-white/90">
-            Быстрый и безопасный способ поблагодарить без наличных
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
-            <Button size="lg" className="bg-white text-primary hover:bg-white/90">
-              Начать пользоваться
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="border-white text-white hover:bg-white hover:text-primary"
-              onClick={handleThankClick}
-            >
-              Поблагодарить
-            </Button>
+      <section className="bg-primary text-white pt-24 pb-24 md:pt-32 md:pb-32 px-4">
+        <div className="max-w-5xl mx-auto">
+          {/* Main Content */}
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+              Благодарность, подарки<br className="hidden sm:block" />
+              {' '}и <span className="italic">чаевые</span> безналично
+            </h2>
+            
+            <p className="text-lg md:text-xl mb-8 text-white/90 leading-relaxed">
+              Простой и безопасный способ поблагодарить без наличных.<br className="hidden md:block" />
+              Сканируйте QR-код, выбирайте сотрудника и оставляйте чаевые.
+            </p>
+
+            {/* How it works - Simple steps */}
+            <div className="grid md:grid-cols-3 gap-6 mb-10 text-left md:text-center">
+              <div className="flex md:flex-col items-start md:items-center gap-4 md:gap-3">
+                <div className="flex-shrink-0 w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold">
+                  1
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Сканируйте QR</h3>
+                  <p className="text-sm text-white/80">Наведите камеру на код</p>
+                </div>
+              </div>
+              
+              <div className="flex md:flex-col items-start md:items-center gap-4 md:gap-3">
+                <div className="flex-shrink-0 w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold">
+                  2
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Выберите сумму</h3>
+                  <p className="text-sm text-white/80">Укажите размер чаевых</p>
+                </div>
+              </div>
+              
+              <div className="flex md:flex-col items-start md:items-center gap-4 md:gap-3">
+                <div className="flex-shrink-0 w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold">
+                  3
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Оплатите</h3>
+                  <p className="text-sm text-white/80">Мгновенный перевод</p>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold">
+                Подключить заведение
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-2 border-white text-white hover:bg-white hover:text-primary font-semibold"
+                onClick={handleThankClick}
+              >
+                Оставить чаевые
+              </Button>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 text-sm text-white/70">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>Безопасные платежи</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
+                </svg>
+                <span>0% комиссия для клиента</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                </svg>
+                <span>Мгновенный перевод</span>
+              </div>
+            </div>
           </div>
-          <p className="text-sm text-white/70">
-            Безопасные платежи • Без комиссии для клиентов • Мгновенный перевод
-          </p>
         </div>
       </section>
 
