@@ -34,7 +34,7 @@ npm run preview   # smoke-тест собранной версии
 | `docs/engineering` | Frontend/API обзоры, coding conventions. |
 | `docs/ui` | Руководства по компонентам, навигации, темизации, состояниям. |
 | `docs/setup` | Локальный запуск, переменные окружения, работа с изображениями. |
-| `docs/operations` | Deployment playbook, troubleshooting. |
+| `docs/operations` | Deployment playbook, troubleshooting, секреты и CI чек-листы. |
 | `docs/changelog.md` | Ключевые релизы и обновления. |
 
 ## Структура лендинга
