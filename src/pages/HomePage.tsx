@@ -30,69 +30,73 @@ export const HomePage = () => {
     { name: 'Кто угодно', image: '/images/anyone.png' },
   ]
 
+  const navigationLinks = [
+    { label: 'Для кого', target: 'for-whom' },
+    { label: 'Что умеет сервис', target: 'service-capabilities' },
+    { label: 'Как это работает', target: 'how-it-works' },
+    { label: 'Как начать', target: 'pricing' },
+  ]
+
+  const actionLinks: { label: string; onClick: () => void; variant: 'default' | 'outline' }[] = [
+    { label: 'Начать пользоваться', onClick: () => scrollToSection('pricing'), variant: 'default' },
+    { label: 'Поблагодарить', onClick: handleThankClick, variant: 'outline' },
+  ]
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-primary shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
+          <div className="relative flex items-center h-16 md:h-20">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-8 pr-24">
+              {navigationLinks.map(({ label, target }) => (
+                <button
+                  key={target}
+                  onClick={() => scrollToSection(target)}
+                  className="text-white/90 hover:text-white transition-colors text-sm font-medium"
+                >
+                  {label}
+                </button>
+              ))}
+            </nav>
+
             {/* Logo and Brand */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 text-white md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2">
               <img 
                 src="/images/Logo.svg" 
                 alt="Tips'yo Logo" 
-                className="h-8 md:h-10 w-auto"
+                className="h-9 md:h-10 w-auto"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.src = '/images/Logo.png';
                 }}
               />
-              <span className="text-xl md:text-2xl font-bold text-white">Tips'yo</span>
+              <span className="text-2xl font-semibold tracking-tight">tips'yo</span>
             </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <button
-                onClick={() => scrollToSection('for-whom')}
-                className="text-white/90 hover:text-white transition-colors font-medium"
-              >
-                Для кого
-              </button>
-              <button
-                onClick={() => scrollToSection('how-it-works')}
-                className="text-white/90 hover:text-white transition-colors font-medium"
-              >
-                Как работает
-              </button>
-              <button
-                onClick={() => scrollToSection('pricing')}
-                className="text-white/90 hover:text-white transition-colors font-medium"
-              >
-                Сколько стоит
-              </button>
-            </nav>
-
-            {/* Desktop CTA Buttons */}
-            <div className="hidden md:flex items-center space-x-4">
-              <Button 
-                variant="outline" 
-                onClick={handleThankClick}
-                className="border-2 border-white text-white hover:bg-white hover:text-primary"
-              >
-                Поблагодарить
-              </Button>
-              <Button className="bg-white text-primary hover:bg-white/90">
-                Начать пользоваться
-              </Button>
+            {/* Desktop CTA Links */}
+            <div className="ml-auto hidden md:flex items-center gap-8 pl-24">
+              {actionLinks.map(({ label, onClick }) => (
+                <button
+                  key={label}
+                  onClick={onClick}
+                  className="text-sm font-medium text-white hover:text-white/80 transition-colors"
+                >
+                  {label}
+                </button>
+              ))}
             </div>
 
             {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2"
-              onClick={() => setMobileMenuOpen(true)}
-            >
-              <Menu className="h-6 w-6 text-white" />
-            </button>
+            <div className="ml-auto md:hidden">
+              <button
+                className="p-2"
+                onClick={() => setMobileMenuOpen(true)}
+              >
+                <Menu className="h-6 w-6 text-white" />
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -102,39 +106,39 @@ export const HomePage = () => {
         <SheetContent>
           <SheetClose onClick={() => setMobileMenuOpen(false)} />
           <SheetHeader>
-            <div className="text-2xl font-bold text-primary mb-8">tipsyo</div>
+            <div className="text-2xl font-bold text-primary mb-8">tips'yo</div>
           </SheetHeader>
           <nav className="flex flex-col space-y-4">
-            <button
-              onClick={() => scrollToSection('for-whom')}
-              className="text-left text-lg text-gray-700 hover:text-primary transition-colors py-2"
-            >
-              Для кого
-            </button>
-            <button
-              onClick={() => scrollToSection('how-it-works')}
-              className="text-left text-lg text-gray-700 hover:text-primary transition-colors py-2"
-            >
-              Как работает
-            </button>
-            <button
-              onClick={() => scrollToSection('pricing')}
-              className="text-left text-lg text-gray-700 hover:text-primary transition-colors py-2"
-            >
-              Сколько стоит
-            </button>
+            {navigationLinks.map(({ label, target }) => (
+              <button
+                key={target}
+                onClick={() => scrollToSection(target)}
+                className="text-left text-lg text-gray-700 hover:text-primary transition-colors py-2"
+              >
+                {label}
+              </button>
+            ))}
             <div className="pt-4 space-y-3">
-              <Button variant="outline" className="w-full" onClick={handleThankClick}>
-                Поблагодарить
-              </Button>
-              <Button className="w-full">Начать пользоваться</Button>
+              {actionLinks.map(({ label, onClick, variant }) => (
+                <Button
+                  key={label}
+                  variant={variant}
+                  className="w-full"
+                  onClick={() => {
+                    setMobileMenuOpen(false)
+                    onClick()
+                  }}
+                >
+                  {label}
+                </Button>
+              ))}
             </div>
           </nav>
         </SheetContent>
       </Sheet>
 
       {/* Hero Section */}
-      <section className="bg-primary text-white pt-24 pb-24 md:pt-32 md:pb-32 px-4">
+      <section id="how-it-works" className="bg-primary text-white pt-24 pb-24 md:pt-32 md:pb-32 px-4">
         <div className="max-w-5xl mx-auto">
           {/* Main Content */}
           <div className="text-center max-w-3xl mx-auto">
@@ -233,15 +237,15 @@ export const HomePage = () => {
           </Button>
           <Button
             variant="ghost"
-            onClick={() => scrollToSection('how-it-works')}
+            onClick={() => scrollToSection('service-capabilities')}
           >
-            Как работает?
+            Что умеет сервис?
           </Button>
           <Button
             variant="ghost"
             onClick={() => scrollToSection('pricing')}
           >
-            Сколько стоит?
+            Как начать?
           </Button>
         </div>
       </section>
@@ -278,12 +282,15 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-16 md:py-24 px-4 bg-gray-50">
+      {/* Service Capabilities Section */}
+      <section id="service-capabilities" className="py-16 md:py-24 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Работает на всех устройствах, без регистрации
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+            Что умеет сервис
           </h2>
+          <p className="text-lg text-gray-600 text-center mb-12">
+            Работает на всех устройствах и не требует регистрации
+          </p>
           <div className="grid md:grid-cols-2 gap-8">
             {/* QR Code Card */}
             <Card className="p-8">
