@@ -36,7 +36,7 @@ Tailwind настраивается в `tailwind.config.js`, общий пост
 ## Работа с изображениями
 
 1. Подготовьте PNG-файлы профессий (512×512).
-2. Поместите их в `public/images/` c именами `waitress.png`, `manicure.png`, `blogger.png`, `courier.png`, `taxi.png`, `trainer.png`.
+2. Поместите их в `public/images/` c именами `waitress.png`, `manicure.png`, `blogger.png`, `gas-station.png`, `courier.png`, `anyone.png`.
 3. Для массового копирования можно использовать `./copy-images.sh <source-dir>`.
 
 Если фотографии отсутствуют, компоненты используют градиентные фолбеки, поэтому лендинг всегда выглядит корректно.
@@ -44,7 +44,7 @@ Tailwind настраивается в `tailwind.config.js`, общий пост
 ## Кастомизация
 
 - **Цвета** — редактируйте CSS-переменные в `src/index.css` или расширяйте палитру Tailwind.
-- **Тексты** — основные копирайты находятся в `src/sections/**`.
+- **Тексты** — основные копирайты находятся в `src/LandingPage.tsx`.
 - **CTA** — ссылки и действия задаются непосредственно в `src/LandingPage.tsx`.
 
 ## Быстрые проверки
