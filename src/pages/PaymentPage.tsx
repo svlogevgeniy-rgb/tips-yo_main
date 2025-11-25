@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CreditCard, Wallet } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { ArrowLeft, Plus } from 'lucide-react'
+
+import { CommissionToggle } from '@/components/common/CommissionToggle'
+import { PageFooter } from '@/components/layout/PageFooter'
+import { PageHeader } from '@/components/layout/PageHeader'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { employees } from '@/data/employees'
+
+const presetAmounts = [50, 99, 150]
+const moodOptions = ['😐', '🙂', '😀', '😍']
+const MESSAGE_LIMIT = 99
 
 export const PaymentPage = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [customAmount, setCustomAmount] = useState('')
+  const [coverCommission, setCoverCommission] = useState(false)
+  const [selectedMood, setSelectedMood] = useState<string | null>(null)
+  const [message, setMessage] = useState('')
 
-  const employee = employees.find((emp) => emp.id === id)
+  const employee = useMemo(
+    () => employees.find((emp) => emp.id === id),
+    [id]
+  )
 
-  // Предустановленные суммы
-  const presetAmounts = [100, 200, 500, 1000, 2000, 5000]
+  const finalAmount = customAmount ? parseInt(customAmount, 10) : selectedAmount
+  const canSubmit = Boolean(finalAmount && finalAmount > 0)
 
   if (!employee) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <Card className="p-8 text-center max-w-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+      <div className="flex min-h-screen items-center justify-center bg-[#F7FFFA] px-4">
+        <div className="max-w-md rounded-[32px] border border-[#E8EFED] bg-white px-8 py-10 text-center">
+          <h2 className="mb-3 font-jost text-2xl text-[#1E5F4B]">
             Сотрудник не найден
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="mb-6 text-[#808080]">
             Запрошенный сотрудник не существует или был удалён
           </p>
           <Button onClick={() => navigate('/employees')}>
-            Вернуться к выбору
+            Вернуться к списку
           </Button>
-        </Card>
+        </div>
       </div>
     )
   }
@@ -40,174 +53,148 @@ export const PaymentPage = () => {
   }
 
   const handleCustomAmountChange = (value: string) => {
-    setCustomAmount(value)
+    const numericValue = value.replace(/[^\d]/g, '')
+    setCustomAmount(numericValue)
     setSelectedAmount(null)
   }
 
-  const finalAmount = customAmount ? parseInt(customAmount) : selectedAmount
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/employees')}
-              className="mr-4"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-lg md:text-xl font-semibold text-gray-900">
-              Оплата чаевых
-            </h1>
-          </div>
-        </div>
-      </header>
+    <div className="flex min-h-screen flex-col bg-white text-[#333333]">
+      <PageHeader>
+        <button
+          type="button"
+          onClick={() => navigate('/employees')}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-[#E8EFED] text-[#1E5F4B] transition hover:border-[#00B22D] hover:text-[#00B22D]"
+          aria-label="Вернуться назад"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+      </PageHeader>
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-        {/* Employee Info */}
-        <Card className="p-4 md:p-6 mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+      <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-8 px-4 py-10 font-inter lg:px-8">
+        <div className="rounded-[32px] border border-[#E8EFED] bg-white px-6 py-8 shadow-sm lg:px-10">
+          <div className="mb-6 flex flex-wrap items-center gap-4">
+            <div className="h-20 w-20 overflow-hidden rounded-[32px] border border-[#E8EFED] bg-[#F2F2F2]">
               <img
                 src={employee.avatar}
                 alt={employee.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement
-                  target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em" font-size="40"%3E?%3C/text%3E%3C/svg%3E'
+                className="h-full w-full object-cover"
+                onError={(event) => {
+                  const target = event.target as HTMLImageElement
+                  target.src =
+                    'https://placehold.co/120x120/CCF0D5/1E5F4B?text=?'
                 }}
               />
             </div>
-            <div className="flex-1">
-              <p className="text-sm text-gray-600 mb-1">Чаевые для</p>
-              <h2 className="text-lg md:text-xl font-bold text-gray-900">
-                {employee.name}
-              </h2>
-              <p className="text-sm text-gray-600">{employee.role}</p>
+            <div>
+              <p className="text-sm text-[#808080]">Чаевые для</p>
+              <p className="font-jost text-2xl">{employee.name}</p>
+              <p className="text-sm text-[#808080]">{employee.role}</p>
             </div>
           </div>
-        </Card>
 
-        {/* Amount Selection */}
-        <Card className="p-6 md:p-8 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Выберите сумму
-          </h3>
+          <CommissionToggle
+            checked={coverCommission}
+            onChange={setCoverCommission}
+            label="Оплачу комиссию 50 ₽, а сотрудник получит всю сумму."
+            className="mb-8"
+          />
 
-          {/* Preset Amounts */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            {presetAmounts.map((amount) => (
-              <button
-                key={amount}
-                onClick={() => handleAmountSelect(amount)}
-                className={`
-                  p-4 rounded-xl border-2 transition-all
-                  ${
+          <div className="space-y-4">
+            <p className="font-jost text-2xl">Сумма чаевых</p>
+            <div className="flex flex-wrap gap-3">
+              {presetAmounts.map((amount) => (
+                <button
+                  key={amount}
+                  type="button"
+                  onClick={() => handleAmountSelect(amount)}
+                  className={`rounded-[12px] px-6 py-4 text-2xl font-jost transition ${
                     selectedAmount === amount
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-200 hover:border-gray-300 text-gray-900'
-                  }
-                  font-semibold text-lg
-                `}
+                      ? 'bg-[#1E5F4B] text-white'
+                      : 'bg-[#CCF0D5] text-[#00B22D]'
+                  }`}
+                >
+                  {amount}
+                  <span className="font-inter text-base"> ₽</span>
+                </button>
+              ))}
+            </div>
+            <div>
+              <p className="mb-2 text-sm text-[#808080]">Или введите сумму</p>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={customAmount}
+                  onChange={(e) => handleCustomAmountChange(e.target.value)}
+                  placeholder="Сумма"
+                  className="w-full rounded-[12px] border border-[#E8EFED] px-5 py-4 text-lg outline-none transition focus:border-[#00B22D]"
+                />
+                <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#808080]">
+                  ₽
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 space-y-4">
+            <p className="font-jost text-2xl">Ваши впечатления</p>
+            <div className="flex flex-wrap gap-3">
+              {moodOptions.map((mood) => (
+                <button
+                  key={mood}
+                  type="button"
+                  onClick={() => setSelectedMood(mood)}
+                  className={`flex h-14 w-14 items-center justify-center rounded-[12px] text-2xl transition ${
+                    selectedMood === mood
+                      ? 'bg-[#1E5F4B] text-white'
+                      : 'bg-[#CCF0D5]'
+                  }`}
+                >
+                  {mood}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="flex h-14 w-14 items-center justify-center rounded-[12px] border border-dashed border-[#E8EFED] text-[#808080]"
+                aria-label="Добавить другое впечатление"
               >
-                {amount} ₽
+                <Plus className="h-6 w-6" />
               </button>
-            ))}
-          </div>
-
-          {/* Custom Amount */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Или введите свою сумму
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                value={customAmount}
-                onChange={(e) => handleCustomAmountChange(e.target.value)}
-                placeholder="Введите сумму"
-                className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none text-lg"
-              />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
-                ₽
-              </span>
             </div>
           </div>
 
-          {/* Amount Summary */}
-          {finalAmount && finalAmount > 0 && (
-            <div className="mt-6 p-4 bg-green-50 rounded-xl">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">Сумма чаевых:</span>
-                <span className="text-lg font-bold text-gray-900">
-                  {finalAmount} ₽
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Комиссия (0%):</span>
-                <span className="font-medium text-gray-900">0 ₽</span>
-              </div>
-              <div className="mt-2 pt-2 border-t border-green-200 flex justify-between items-center">
-                <span className="font-semibold text-gray-900">К оплате:</span>
-                <span className="text-xl font-bold text-primary">
-                  {finalAmount} ₽
-                </span>
-              </div>
+          <div className="mt-8 space-y-4">
+            <p className="font-jost text-2xl">Пожелания</p>
+            <textarea
+              value={message}
+              onChange={(event) => {
+                const value = event.target.value.slice(0, MESSAGE_LIMIT)
+                setMessage(value)
+              }}
+              placeholder="Напишите пару тёплых слов"
+              className="min-h-[120px] w-full rounded-[12px] border border-[#E8EFED] bg-[#F2F2F2] p-4 text-base text-[#333333] outline-none transition focus:border-[#00B22D]"
+            />
+            <div className="text-right text-sm text-[#808080]">
+              {MESSAGE_LIMIT - message.length}
             </div>
-          )}
-        </Card>
-
-        {/* Payment Methods */}
-        <Card className="p-6 md:p-8 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Способ оплаты
-          </h3>
-
-          <div className="space-y-3">
-            {/* Card Payment */}
-            <button className="w-full p-4 border-2 border-gray-200 rounded-xl hover:border-primary transition-all flex items-center gap-4 text-left">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <CreditCard className="w-6 h-6 text-primary" />
-              </div>
-              <div className="flex-1">
-                <div className="font-semibold text-gray-900">Банковская карта</div>
-                <div className="text-sm text-gray-600">Visa, Mastercard, МИР</div>
-              </div>
-            </button>
-
-            {/* SBP Payment */}
-            <button className="w-full p-4 border-2 border-gray-200 rounded-xl hover:border-primary transition-all flex items-center gap-4 text-left">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Wallet className="w-6 h-6 text-primary" />
-              </div>
-              <div className="flex-1">
-                <div className="font-semibold text-gray-900">СБП</div>
-                <div className="text-sm text-gray-600">Система быстрых платежей</div>
-              </div>
-            </button>
           </div>
-        </Card>
+        </div>
 
-        {/* Pay Button */}
+        <div className="text-sm text-[#808080]">
+          <p>TIPS – сервис для получения благодарности, подарков или чаевых безналично.</p>
+          <p className="text-[#00B22D]">Начать пользоваться</p>
+        </div>
+
         <Button
           size="lg"
-          className="w-full"
-          disabled={!finalAmount || finalAmount <= 0}
+          className="w-full rounded-[16px] bg-[#1E5F4B] text-lg font-semibold text-white transition hover:bg-[#154737]"
+          disabled={!canSubmit}
         >
-          Оплатить {finalAmount && finalAmount > 0 ? `${finalAmount} ₽` : ''}
+          Поблагодарить {canSubmit ? `${finalAmount} ₽` : ''}
         </Button>
-
-        {/* Info */}
-        <div className="mt-6 text-center text-sm text-gray-500">
-          <p>Безопасная оплата через tipsyo</p>
-          <p className="mt-1">Комиссия 0% для клиента • Мгновенный перевод</p>
-        </div>
       </main>
+
+      <PageFooter />
     </div>
   )
 }
