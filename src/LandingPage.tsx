@@ -15,13 +15,37 @@ const LandingPage = () => {
     }
   }
 
-  const professions = [
-    { name: 'Официанты', image: '/images/waitress.png' },
-    { name: 'Мастера маникюра', image: '/images/manicure.png' },
-    { name: 'Блогеры', image: '/images/blogger.png' },
-    { name: 'Заправщики', image: '/images/gas-station.png' },
-    { name: 'Курьеры', image: '/images/courier.png' },
-    { name: 'Кто угодно', image: '/images/anyone.png' },
+  const gratitudeCards = [
+    {
+      name: 'Официанты',
+      image: 'http://localhost:3845/assets/b7057fba7ea83ca99bda9688c9bc6f47277ebe33.png',
+      offsetClass: 'lg:mt-[0px]',
+    },
+    {
+      name: 'Мастер маникюра',
+      image: 'http://localhost:3845/assets/31b67cf239ba36b3525350523648c20c13ec12c9.png',
+      offsetClass: 'lg:mt-[18px]',
+    },
+    {
+      name: 'Блогеры',
+      image: 'http://localhost:3845/assets/2eaefe59fc29f944b9ea96a2674860b41778c856.png',
+      offsetClass: 'lg:mt-[36px]',
+    },
+    {
+      name: 'Заправщики',
+      image: 'http://localhost:3845/assets/e407bba322b98a54eb6eb56f750dba20061220c7.png',
+      offsetClass: 'lg:mt-[54px]',
+    },
+    {
+      name: 'Курьеры',
+      image: 'http://localhost:3845/assets/2f28e42725e6abc22a92afe8d89dd5cb3e34ef27.png',
+      offsetClass: 'lg:mt-[72px]',
+    },
+    {
+      name: 'Просто так...',
+      image: 'http://localhost:3845/assets/49ced31440623d87977410bbe9230501afb4842e.png',
+      offsetClass: 'lg:mt-[90px]',
+    },
   ]
 
   return (
@@ -158,31 +182,50 @@ const LandingPage = () => {
       </section>
 
       {/* For Whom Section */}
-      <section id="for-whom" className="py-16 md:py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Подойдёт всем, кого принято благодарить
+      <section id="for-whom" className="py-16 md:py-24 px-4 bg-[#F8FBFD]">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-bold text-center text-[#1E5F4B] md:leading-tight">
+            Подойдёт всем, <br className="hidden md:block" /> кого принято благодарить
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-            {professions.map((profession) => (
-              <Card key={profession.name} className="overflow-hidden">
-                <div className="h-48 md:h-56 bg-gray-100 relative">
-                  <img 
-                    src={profession.image} 
-                    alt={profession.name}
+
+          {/* Desktop staggered layout */}
+          <div className="hidden lg:flex justify-center gap-6 mt-16">
+            {gratitudeCards.map((card) => (
+              <article
+                key={card.name}
+                className={`flex-shrink-0 w-[190px] ${card.offsetClass}`}
+              >
+                <div className="rounded-[50px] bg-white shadow-[0px_8px_16px_rgba(0,0,0,0.06)] p-4 pb-8 flex flex-col items-center">
+                  <div className="w-full h-[260px] rounded-[40px] overflow-hidden mb-6">
+                    <img
+                      src={card.image}
+                      alt={card.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <p className="text-[#1E5F4B] text-center text-lg font-medium leading-tight">
+                    {card.name}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {/* Mobile / tablet grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-10 lg:hidden">
+            {gratitudeCards.map((card) => (
+              <Card key={card.name} className="rounded-[36px] shadow-[0px_8px_16px_rgba(0,0,0,0.06)] border-0">
+                <div className="h-40 sm:h-48 rounded-[30px] overflow-hidden m-3 mb-2">
+                  <img
+                    src={card.image}
+                    alt={card.name}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-                      // Fallback to gradient if image not found
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      if (target.parentElement) {
-                        target.parentElement.className = 'h-48 md:h-56 bg-gradient-to-br from-emerald-400 to-teal-500';
-                      }
-                    }}
                   />
                 </div>
-                <CardContent className="p-4">
-                  <p className="text-center font-medium text-sm">{profession.name}</p>
+                <CardContent className="pb-6">
+                  <p className="text-[#1E5F4B] text-center text-sm font-medium leading-tight">
+                    {card.name}
+                  </p>
                 </CardContent>
               </Card>
             ))}

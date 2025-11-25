@@ -16,6 +16,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        jost: ['"Jost"', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -23,15 +26,15 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#0C4A3D",
+          DEFAULT: "#1E5F4B",
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "#BDD2E7",
           foreground: "hsl(var(--secondary-foreground))",
         },
         accent: {
-          DEFAULT: "#10B981",
+          DEFAULT: "#00B22D",
           foreground: "#ffffff",
         },
         muted: {
@@ -42,6 +45,8 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        infinityGreen: "#7E8937",
+        percentBlue: "#376089",
       },
       borderRadius: {
         lg: "var(--radius)",
