@@ -30,7 +30,7 @@ export interface UIColorPalette {
 
 const baseText: Omit<PaletteTextSpec, 'color'> = {
   fontSize: 24,
-  fontFamily: 'TT Hoves',
+  fontFamily: 'Manrope',
   fontWeight: '500',
   lineHeight: 33.6,
   wordWrap: 'break-word',
@@ -63,7 +63,7 @@ export const uiColors: UIColorPalette = {
     spec: {
       color: '#33CC99',
       fontSize: 48,
-      fontFamily: 'TT Hoves',
+      fontFamily: 'Manrope',
       fontWeight: '500',
       lineHeight: 63.36,
       wordWrap: 'break-word',
@@ -75,7 +75,7 @@ export const uiColors: UIColorPalette = {
     spec: {
       color: '#33CC99',
       fontSize: 18,
-      fontFamily: 'TT Hoves',
+      fontFamily: 'Manrope',
       fontWeight: '400',
       lineHeight: 28.8,
       wordWrap: 'break-word',
@@ -84,4 +84,3 @@ export const uiColors: UIColorPalette = {
 }
 
 export type UIColorToken = keyof UIColorPalette
-

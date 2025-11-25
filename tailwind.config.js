@@ -15,9 +15,12 @@ export default {
         "2xl": "1400px",
       },
     },
+    fontFamily: {
+      sans: ['"Manrope"', "sans-serif"],
+    },
     extend: {
       fontFamily: {
-        jost: ['"Jost"', 'sans-serif'],
+        manrope: ['"Manrope"', "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

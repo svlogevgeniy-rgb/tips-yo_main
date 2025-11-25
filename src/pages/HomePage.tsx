@@ -23,32 +23,32 @@ export const HomePage = () => {
   const professions = [
     { 
       name: 'Официанты', 
-      image: 'http://localhost:3845/assets/b7057fba7ea83ca99bda9688c9bc6f47277ebe33.png',
+      image: '/images/waitress.png',
       offsetClass: 'lg:mt-0'
     },
     { 
       name: 'Мастер маникюра', 
-      image: 'http://localhost:3845/assets/31b67cf239ba36b3525350523648c20c13ec12c9.png',
+      image: '/images/manicure.png',
       offsetClass: 'lg:mt-[19px]'
     },
     { 
       name: 'Блогеры', 
-      image: 'http://localhost:3845/assets/2eaefe59fc29f944b9ea96a2674860b41778c856.png',
+      image: '/images/blogger.png',
       offsetClass: 'lg:mt-[38px]'
     },
     { 
       name: 'Заправщики', 
-      image: 'http://localhost:3845/assets/e407bba322b98a54eb6eb56f750dba20061220c7.png',
+      image: '/images/gas-station.png',
       offsetClass: 'lg:mt-[57px]'
     },
     { 
       name: 'Курьеры', 
-      image: 'http://localhost:3845/assets/2f28e42725e6abc22a92afe8d89dd5cb3e34ef27.png',
+      image: '/images/courier.png',
       offsetClass: 'lg:mt-[76px]'
     },
     { 
       name: 'Просто так...', 
-      image: 'http://localhost:3845/assets/49ced31440623d87977410bbe9230501afb4842e.png',
+      image: '/images/anyone.png',
       offsetClass: 'lg:mt-[95px]'
     },
   ]
@@ -87,12 +87,12 @@ export const HomePage = () => {
             {/* Logo and Brand */}
             <div className="flex items-center gap-3 text-white md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2">
               <img 
-                src="http://localhost:3845/assets/3a17e5a5c969b5fa38fbc2620a50ccf0e396b9ab.svg" 
+                src="/images/Logo.svg" 
                 alt="Tips'yo Logo" 
                 className="h-9 md:h-10 w-auto"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = '/images/Logo.svg';
+                  target.src = '/images/Logo.png';
                 }}
               />
               <span className="text-2xl font-semibold tracking-tight">tips'yo</span>
@@ -165,12 +165,12 @@ export const HomePage = () => {
         <div className="max-w-5xl mx-auto">
           {/* Main Content */}
           <div className="mx-auto flex w-full max-w-[1144px] flex-col items-center text-center">
-            <h1 className="font-jost text-[42px] font-medium leading-[110%] text-white sm:text-[56px] md:text-[72px] lg:text-[90px] mb-5">
+            <h1 className="font-manrope text-[42px] font-medium leading-[110%] text-white sm:text-[56px] md:text-[72px] lg:text-[90px] mb-5">
               Благодарность, подарки<br />
-              и <span className="italic font-serif">чаевые</span> безналично
+              и <span className="italic font-manrope">чаевые</span> безналично
             </h1>
 
-            <p className="font-jost text-[20px] md:text-[32px] leading-[1.4] mb-8 md:mb-[60px] text-white max-w-[654px]">
+            <p className="font-manrope text-[20px] md:text-[32px] leading-[1.4] mb-8 md:mb-[60px] text-white max-w-[654px]">
               Быстрый и безопасный способ поблагодарить без наличных
             </p>
 
@@ -223,7 +223,7 @@ export const HomePage = () => {
       {/* For Whom Section */}
       <section id="for-whom" className="py-16 md:py-24 px-4 bg-[#F8FBFD]">
         <div className="max-w-6xl mx-auto">
-          <h2 className="font-jost text-[40px] md:text-[60px] leading-[1.2] font-normal text-center text-black mb-12 md:mb-16">
+          <h2 className="font-manrope text-[40px] md:text-[60px] leading-[1.2] font-normal text-center text-black mb-12 md:mb-16">
             Подойдёт всем, <br className="hidden md:block" />кого принято благодарить
           </h2>
 
@@ -287,7 +287,7 @@ export const HomePage = () => {
       {/* How It Works Section */}
       <section id="how-it-works" className="py-16 md:py-24 px-4 bg-white">
         <div className="max-w-[1074px] mx-auto">
-          <h2 className="font-jost text-[40px] md:text-[60px] leading-[1.2] font-normal text-center text-black mb-10 md:mb-[60px]">
+          <h2 className="font-manrope text-[40px] md:text-[60px] leading-[1.2] font-normal text-center text-black mb-10 md:mb-[60px]">
             Работает на всех устройствах, без регистрации
           </h2>
           <div className="grid md:grid-cols-2 gap-5">
@@ -314,7 +314,7 @@ export const HomePage = () => {
                   }}
                 />
               </div>
-              <h3 className="font-jost text-[32px] leading-[1.4] font-normal mb-1 text-black">QR-код</h3>
+              <h3 className="font-manrope text-[32px] leading-[1.4] font-normal mb-1 text-black">QR-код</h3>
               <p className="text-[16px] leading-[1.6] text-black max-w-[247px]">
                 Клиент сканирует QR-код, переходит по ссылке и указывает сумму.
               </p>
@@ -323,10 +323,10 @@ export const HomePage = () => {
             {/* Simple Code Card */}
             <div className="bg-[#FAF7F2] rounded-[50px] p-8 md:p-12 flex flex-col items-center text-center">
               <div className="bg-white w-[184px] h-[207px] rounded-[50px] mb-10 flex flex-col items-center justify-center">
-                <p className="font-jost text-[70px] leading-[1.1] font-medium text-[#333333]">345</p>
-                <p className="font-jost text-[70px] leading-[1.1] font-medium text-[#333333]">678</p>
+                <p className="font-manrope text-[70px] leading-[1.1] font-medium text-[#333333]">345</p>
+                <p className="font-manrope text-[70px] leading-[1.1] font-medium text-[#333333]">678</p>
               </div>
-              <h3 className="font-jost text-[32px] leading-[1.4] font-normal mb-1 text-black">Простой код</h3>
+              <h3 className="font-manrope text-[32px] leading-[1.4] font-normal mb-1 text-black">Простой код</h3>
               <p className="text-[16px] leading-[1.6] text-black max-w-[247px]">
                 Клиент заходит на tips.tips, вводит шестизначный код и указывает сумму
               </p>
@@ -338,7 +338,7 @@ export const HomePage = () => {
       {/* Pricing Section */}
       <section id="pricing" className="py-16 md:py-24 px-4 bg-[#E8EFED]">
         <div className="max-w-[1074px] mx-auto">
-          <h2 className="font-jost text-[40px] md:text-[60px] leading-[1.2] font-normal text-center text-black mb-10 md:mb-[60px]">
+          <h2 className="font-manrope text-[40px] md:text-[60px] leading-[1.2] font-normal text-center text-black mb-10 md:mb-[60px]">
             Первый месяц – бесплатно,<br />
             дальше – 5% процентов
           </h2>
@@ -346,9 +346,9 @@ export const HomePage = () => {
             {/* Unlimited Card */}
             <div className="bg-white rounded-[50px] p-8 md:p-12 flex flex-col items-center text-center">
               <div className="bg-[rgba(232,239,237,0.5)] w-[184px] h-[207px] rounded-[50px] mb-10 flex items-center justify-center">
-                <span className="font-jost text-[150px] leading-[1.1] font-medium text-infinityGreen">∞</span>
+                <span className="font-manrope text-[150px] leading-[1.1] font-medium text-infinityGreen">∞</span>
               </div>
-              <h3 className="font-jost text-[32px] leading-[1.4] font-normal mb-1 text-black">Неограниченно</h3>
+              <h3 className="font-manrope text-[32px] leading-[1.4] font-normal mb-1 text-black">Неограниченно</h3>
               <p className="text-[16px] leading-[1.6] text-black max-w-[247px]">
                 Добавляйте несколько QR-кодов и используйте их по ситуации
               </p>
@@ -357,10 +357,10 @@ export const HomePage = () => {
             {/* Commission Card */}
             <div className="bg-white rounded-[50px] p-8 md:p-12 flex flex-col items-center text-center">
               <div className="bg-[#F8FBFD] w-[184px] h-[207px] rounded-[50px] mb-10 flex items-center justify-center relative">
-                <span className="font-jost text-[150px] leading-[1.1] font-medium text-percentBlue absolute left-[50px] top-[40px]">5</span>
-                <span className="font-jost text-[30px] leading-[1.1] font-medium text-percentBlue absolute right-[40px] bottom-[50px]">%</span>
+                <span className="font-manrope text-[150px] leading-[1.1] font-medium text-percentBlue absolute left-[50px] top-[40px]">5</span>
+                <span className="font-manrope text-[30px] leading-[1.1] font-medium text-percentBlue absolute right-[40px] bottom-[50px]">%</span>
               </div>
-              <h3 className="font-jost text-[32px] leading-[1.4] font-normal mb-1 text-black">Только 5%</h3>
+              <h3 className="font-manrope text-[32px] leading-[1.4] font-normal mb-1 text-black">Только 5%</h3>
               <p className="text-[16px] leading-[1.6] text-black max-w-[247px]">
                 Выплаты осуществляются по договору дарения, налог платим мы сами
               </p>
@@ -371,13 +371,13 @@ export const HomePage = () => {
           <div className="flex flex-col sm:flex-row gap-5 justify-center">
             <button 
               onClick={handleThankClick}
-              className="bg-accent text-white hover:bg-accent/90 font-jost text-[32px] leading-[1.4] px-8 py-6 rounded-[32px] h-[100px] w-full sm:w-[372px] transition-colors"
+              className="bg-accent text-white hover:bg-accent/90 font-manrope text-[32px] leading-[1.4] px-8 py-6 rounded-[32px] h-[100px] w-full sm:w-[372px] transition-colors"
             >
               Поблагодарить
             </button>
             <button 
               onClick={() => scrollToSection('pricing')}
-              className="bg-black text-white hover:bg-black/90 font-jost text-[32px] leading-[1.4] px-8 py-6 rounded-[32px] h-[100px] w-full sm:w-[372px] transition-colors"
+              className="bg-black text-white hover:bg-black/90 font-manrope text-[32px] leading-[1.4] px-8 py-6 rounded-[32px] h-[100px] w-full sm:w-[372px] transition-colors"
             >
               Начать пользоваться
             </button>
