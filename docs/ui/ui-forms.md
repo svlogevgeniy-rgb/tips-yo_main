@@ -7,7 +7,7 @@
 
 ## Валидация
 - **Синхронная**: required, формат, min/max (моментально, onBlur).
-- **Асинхронная**: проверки KYC/Xendit — показываем state `Verifying…` + spinner.
+- **Асинхронная**: проверки KYC/Midtrans — показываем state `Verifying…` + spinner.
 - Ошибки отображаются под полем + summary сверху (toast).
 
 ## Чеклисты

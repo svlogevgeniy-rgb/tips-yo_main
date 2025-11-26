@@ -11,9 +11,10 @@
 
 | Метод | URL | Описание |
 |-------|-----|----------|
-| POST  | `/api/payment-links/create` | Создаёт запись `Tip`, вызывает Xendit Payment Link и возвращает URL. |
-| POST  | `/api/webhooks/xendit` | Принимает webhook, валидация `X-CALLBACK-TOKEN`, идемпотентный аудит. |
-| GET   | `/api/tips/:externalId` | Возвращает статус чаевых. |
+| POST  | `/api/payments/midtrans/snap-intents` | Создаёт `Tip`, вызывает Midtrans Snap API и возвращает token/redirect. |
+| POST  | `/api/payments/midtrans/payment-link` | Генерирует Midtrans Payment Link по API и отдаёт URL гостю. |
+| POST  | `/api/payments/midtrans/notifications` | Принимает уведомления Midtrans, валидирует подпись, апдейтит Tip. |
+| GET   | `/api/tips/:tipId/status` | Возвращает публичный статус чаевых. |
 | GET   | `/healthz` | Простой healthcheck. |
 
 ## Переменные окружения
@@ -21,8 +22,11 @@
 См. `.env.example`. Критичные параметры:
 
 - `DATABASE_URL` — PostgreSQL или совместимый DSN.
-- `XENDIT_SECRET_KEY`, `XENDIT_CALLBACK_TOKEN` — ключи интеграции.
+- `MIDTRANS_SERVER_KEY`, `MIDTRANS_CLIENT_KEY`, `MIDTRANS_MERCHANT_ID` — ключи PSP.
+- `MIDTRANS_ENV` — `sandbox` или `production`.
+- `MIDTRANS_NOTIFICATION_SECRET` — подпись для callback'ов.
 - `WEB_BASE_URL` — URL фронта (redirect/thank-you).
+- `GOOGLE_PAY_TEST_MERCHANT_ID` — идентификатор для sandbox Google Pay.
 
 ## Скрипты
 

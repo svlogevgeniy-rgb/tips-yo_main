@@ -3,7 +3,7 @@
 ## Loading
 - **Skeletons**: используем компоненты `Skeleton` (todo) и `StatsTile` placeholders.
 - **Button loading**: prop `loading` показывает spinner, блокирует клик.
-- **Tables**: показываем 3–5 скелет-строк + hint «Обновляем данные Xendit…».
+- **Tables**: показываем 3–5 скелет-строк + hint «Обновляем данные Midtrans…».
 
 ## Empty
 - Используем `EmptyState` c иллюстрацией (emoji/иконка) + CTA.
@@ -11,7 +11,7 @@
 
 ## Error
 - Inline ошибки форм (`Input error`) + summary (toast/alert) c actionable текстом.
-- Для интеграций Xendit — статус badges (danger) + кнопка Retry.
+- Для интеграций Midtrans — статус badges (danger) + кнопка Retry.
 
 ## No Access / Permissions
 - Экран с иконкой lock, текст «Нет доступа», CTA «Вернуться на главную» + ссылка на поддержку.
