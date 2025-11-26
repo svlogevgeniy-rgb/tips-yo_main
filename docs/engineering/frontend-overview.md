@@ -2,30 +2,33 @@
 
 ## Tech stack
 
-- Next.js 14 (App Router)
-- TypeScript + ESLint (core web vitals rules)
+- React 18 + Vite (SPA)
+- TypeScript + ESLint
 - Vitest + Testing Library (готов к добавлению UI-тестов)
-- Ручной дизайн-системы на CSS переменных без Tailwind
+- Tailwind + кастомные токены (shadcn/ui компоненты)
 
 ## Страницы
 
 | Путь | Назначение |
 |------|------------|
-| `/` | Лендинг для гостя + форма создания Payment Link. |
-| `/thank-you` | Экран благодарности после Hosted Checkout. |
+| `/` | Лендинг для гостя + форма запуска Midtrans Snap/Payment Link. |
+| `/thank-you` | Экран благодарности после Hosted Checkout (при необходимости). |
 | `/dashboard/merchant` | Заглушка кабинета заведения (сплиты, сотрудники, операции). |
 | `/dashboard/staff` | Заглушка кабинета персонала. |
 
 ## Обращения к API
 
-Форма гостя вызывает `POST /api/payment-links/create` на backend через `NEXT_PUBLIC_API_BASE_URL`. ID мерчанта задаётся переменной `NEXT_PUBLIC_DEFAULT_MERCHANT_ID`.
+- Основное действие: `POST /api/payments/midtrans/snap-intents` (через `VITE_API_BASE_URL`).  
+- Альтернативный сценарий «Отправить ссылку»: `POST /api/payments/midtrans/payment-link`.  
+- Статусы подтягиваются через `GET /api/tips/:tipId/status` (доступно для страницы «Спасибо»).  
+- Идентификаторы мерчанта/сотрудника прокидываются из UI по данным QR/ссылки (см. бизнес-правила в functional spec).
 
 ## Быстрый старт
 
 ```bash
-npm run dev:web         # Next.js dev server на 3000
-npm run lint --workspace=@tipsyo/web
-npm run test --workspace=@tipsyo/web
+npm run dev            # Vite dev server на 5173
+npm run lint
+npm run test
 ```
 
 ## Дальнейшие шаги
