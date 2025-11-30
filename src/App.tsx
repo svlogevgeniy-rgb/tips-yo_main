@@ -1,7 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { HomePage } from './pages/HomePage'
-import { EmployeeSelection } from './pages/EmployeeSelection'
-import { PaymentPage } from './pages/PaymentPage'
+import { QRMockup } from './pages/QRMockup'
+import { EmployeeSelectionNew } from './pages/EmployeeSelectionNew'
+import { EmployeeTipForm } from './pages/EmployeeTipForm'
+import { PaymentCardPage } from './pages/PaymentCardPage'
+import { ThreeDSPage } from './pages/ThreeDSPage'
+import { ThankYouPage } from './pages/ThankYouPage'
 import TypographyPage from './pages/TypographyPage'
 
 function App() {
@@ -9,8 +13,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/employees" element={<EmployeeSelection />} />
-        <Route path="/employee/:id" element={<PaymentPage />} />
+        <Route path="/qr-mockup" element={<QRMockup />} />
+        <Route path="/employees" element={<EmployeeSelectionNew />} />
+        <Route path="/employee/:id" element={<EmployeeTipForm />} />
+        <Route path="/payment" element={<PaymentCardPage />} />
+        <Route path="/payment/3ds" element={<ThreeDSPage />} />
+        <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/ui/typography" element={<TypographyPage />} />
       </Routes>
     </BrowserRouter>
