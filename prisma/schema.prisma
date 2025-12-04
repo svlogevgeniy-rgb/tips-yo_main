@@ -27,6 +27,8 @@ enum StaffRole {
   BARTENDER
   BARISTA
   HOSTESS
+  CHEF
+  ADMINISTRATOR
   OTHER
 }
 
@@ -134,6 +136,7 @@ model Staff {
   status             StaffStatus @default(ACTIVE)
   participatesInPool Boolean     @default(true)
   avatarUrl          String?
+  balance            Int         @default(0)
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
 

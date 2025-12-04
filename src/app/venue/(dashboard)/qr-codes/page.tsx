@@ -23,7 +23,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Download, ExternalLink } from "lucide-react";
+import { Loader2, Download, ExternalLink, Users, FileImage, FileText } from "lucide-react";
+import { QR_MATERIALS, getBackgroundStyles, getDimensions, QrMaterial } from "@/lib/qr-materials";
 
 const tableQrSchema = z.object({
   label: z.string().min(1, "Label is required"),
@@ -54,6 +55,10 @@ export default function QrCodesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [distributionMode, setDistributionMode] = useState<"POOLED" | "PERSONAL">("PERSONAL");
+  const [activeStaffCount, setActiveStaffCount] = useState(0);
+  const [selectedQrForMaterials, setSelectedQrForMaterials] = useState<QrCode | null>(null);
+  const [downloadingMaterial, setDownloadingMaterial] = useState<string | null>(null);
 
   const form = useForm<TableQrForm>({
     resolver: zodResolver(tableQrSchema),
@@ -77,6 +82,8 @@ export default function QrCodesPage() {
 
         if (dashData.venue?.id) {
           setVenueId(dashData.venue.id);
+          setDistributionMode(dashData.venue.distributionMode || "PERSONAL");
+          setActiveStaffCount(dashData.metrics?.activeStaff || 0);
 
           // Fetch QR codes
           const qrRes = await fetch(`/api/qr?venueId=${dashData.venue.id}`);
@@ -152,6 +159,111 @@ export default function QrCodesPage() {
     }
   };
 
+  const handleDownloadMaterial = async (
+    qrCode: QrCode,
+    material: QrMaterial,
+    format: "png" | "pdf"
+  ) => {
+    setDownloadingMaterial(`${material.id}-${format}`);
+    try {
+      const response = await fetch(
+        `/api/qr/${qrCode.id}/material?materialId=${material.id}&format=${format}`
+      );
+      if (!response.ok) throw new Error("Download failed");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `qr-${qrCode.shortCode}-${material.id}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error("Download material failed:", err);
+      setError("Failed to download material");
+    } finally {
+      setDownloadingMaterial(null);
+    }
+  };
+
+  // Material preview component
+  const MaterialPreview = ({ material, qrCode }: { material: QrMaterial; qrCode: QrCode }) => {
+    const styles = getBackgroundStyles(material.backgroundColor);
+    const dims = getDimensions(material.orientation);
+    const isHorizontal = material.orientation === "horizontal";
+    
+    return (
+      <div className="border border-white/10 rounded-xl overflow-hidden bg-white/5">
+        {/* Preview */}
+        <div 
+          className="p-4 flex items-center justify-center"
+          style={{ 
+            background: styles.background,
+            minHeight: isHorizontal ? "120px" : "180px",
+          }}
+        >
+          <div className={`flex ${isHorizontal ? "flex-row gap-4" : "flex-col gap-3"} items-center`}>
+            {/* QR placeholder */}
+            <div 
+              className="rounded-lg flex items-center justify-center"
+              style={{ 
+                width: isHorizontal ? "80px" : "100px",
+                height: isHorizontal ? "80px" : "100px",
+                backgroundColor: styles.qrColor === "#FFFFFF" ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.9)",
+              }}
+            >
+              <span className="text-xs" style={{ color: styles.qrColor === "#FFFFFF" ? "#000" : "#FFF" }}>
+                QR
+              </span>
+            </div>
+            {/* CTA text */}
+            <div 
+              className={`font-semibold ${isHorizontal ? "text-lg" : "text-base text-center"}`}
+              style={{ color: styles.textColor }}
+            >
+              {material.ctaText}
+            </div>
+          </div>
+        </div>
+        
+        {/* Actions */}
+        <div className="p-3 flex items-center justify-between bg-white/5">
+          <span className="text-sm text-muted-foreground">{material.label}</span>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleDownloadMaterial(qrCode, material, "png")}
+              disabled={downloadingMaterial === `${material.id}-png`}
+            >
+              {downloadingMaterial === `${material.id}-png` ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <FileImage className="h-3 w-3" />
+              )}
+              <span className="ml-1">PNG</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleDownloadMaterial(qrCode, material, "pdf")}
+              disabled={downloadingMaterial === `${material.id}-pdf`}
+            >
+              {downloadingMaterial === `${material.id}-pdf` ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <FileText className="h-3 w-3" />
+              )}
+              <span className="ml-1">PDF</span>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (isPageLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -176,10 +288,32 @@ export default function QrCodesPage() {
         </div>
       )}
 
+      {/* No Staff Alert - Show for PERSONAL mode when no active staff */}
+      {distributionMode === "PERSONAL" && activeStaffCount === 0 && (
+        <Card className="glass p-4 border-primary/30 bg-primary/10">
+          <div className="flex items-center gap-3">
+            <Users className="h-5 w-5 text-primary flex-shrink-0" />
+            <div className="flex-1">
+              <div className="font-medium">Добавьте сотрудников</div>
+              <div className="text-sm text-muted-foreground">
+                Для генерации QR-кодов добавьте хотя бы одного сотрудника
+              </div>
+            </div>
+            <Button 
+              size="sm"
+              onClick={() => window.location.href = "/venue/staff"}
+            >
+              Добавить
+            </Button>
+          </div>
+        </Card>
+      )}
+
       <Tabs defaultValue="staff" className="space-y-6">
         <TabsList className="glass">
           <TabsTrigger value="staff">Staff QRs ({personalQrs.length})</TabsTrigger>
           <TabsTrigger value="tables">Table QRs ({tableQrs.length})</TabsTrigger>
+          <TabsTrigger value="materials">Материалы</TabsTrigger>
         </TabsList>
 
         <TabsContent value="staff">
@@ -351,6 +485,87 @@ export default function QrCodesPage() {
                     </div>
                   ))}
                 </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="materials">
+          <Card className="glass">
+            <CardHeader>
+              <CardTitle className="font-heading">
+                Материалы для печати
+              </CardTitle>
+              <CardDescription>
+                Скачайте QR-коды в разных дизайнах для размещения в заведении
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* QR Selection */}
+              {qrCodes.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    Сначала создайте QR-код для генерации материалов
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {/* Select QR */}
+                  <div className="space-y-2">
+                    <Label>Выберите QR-код</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {qrCodes.map((qr) => (
+                        <Button
+                          key={qr.id}
+                          variant={selectedQrForMaterials?.id === qr.id ? "default" : "outline"}
+                          className="justify-start"
+                          onClick={() => setSelectedQrForMaterials(qr)}
+                        >
+                          {qr.staff?.displayName || qr.label || qr.shortCode}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Materials Grid */}
+                  {selectedQrForMaterials && (
+                    <div className="space-y-4">
+                      <div className="text-sm text-muted-foreground">
+                        Материалы для: <span className="text-foreground font-medium">
+                          {selectedQrForMaterials.staff?.displayName || selectedQrForMaterials.label || selectedQrForMaterials.shortCode}
+                        </span>
+                      </div>
+                      
+                      {/* Horizontal variants */}
+                      <div>
+                        <h4 className="text-sm font-medium mb-3">Горизонтальные</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {QR_MATERIALS.filter(m => m.orientation === "horizontal").map((material) => (
+                            <MaterialPreview 
+                              key={material.id} 
+                              material={material} 
+                              qrCode={selectedQrForMaterials} 
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Vertical variants */}
+                      <div>
+                        <h4 className="text-sm font-medium mb-3">Вертикальные</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {QR_MATERIALS.filter(m => m.orientation === "vertical").map((material) => (
+                            <MaterialPreview 
+                              key={material.id} 
+                              material={material} 
+                              qrCode={selectedQrForMaterials} 
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </CardContent>
           </Card>

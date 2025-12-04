@@ -113,7 +113,9 @@ export default function TipPage() {
   const totalAmount = coverFee ? finalAmount + platformFee : finalAmount;
 
   const isPersonalQr = qrData?.type === "PERSONAL";
-  const showStaffChoice = !isPersonalQr && qrData?.venue.allowStaffChoice;
+  // Show staff choice for PERSONAL distribution mode (venue-level QR) or when allowStaffChoice is enabled
+  const isPersonalDistribution = qrData?.venue.distributionMode === "PERSONAL";
+  const showStaffChoice = !isPersonalQr && (isPersonalDistribution || qrData?.venue.allowStaffChoice) && qrData?.availableStaff && qrData.availableStaff.length > 0;
   const targetStaff = isPersonalQr
     ? qrData?.staff
     : tipTarget === "staff"

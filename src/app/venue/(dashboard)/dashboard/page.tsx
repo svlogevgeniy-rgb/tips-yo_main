@@ -18,12 +18,16 @@ import {
   Users, 
   Banknote,
   AlertCircle,
+  History,
 } from "lucide-react";
+
+type DistributionMode = "POOLED" | "PERSONAL";
 
 interface DashboardData {
   venue: {
     id: string;
     name: string;
+    distributionMode: DistributionMode;
   };
   metrics: {
     totalTips: number;
@@ -38,6 +42,11 @@ interface DashboardData {
     tipsCount: number;
   }>;
   hasPendingPayouts: boolean;
+  recentTips?: Array<{
+    id: string;
+    amount: number;
+    createdAt: string;
+  }>;
 }
 
 function formatCurrency(amount: number): string {
@@ -49,6 +58,15 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+function formatDate(dateString: string): string {
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(dateString));
+}
+
 export default function VenueDashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -57,6 +75,8 @@ export default function VenueDashboardPage() {
   const [period, setPeriod] = useState("week");
   const t = useTranslations('venue.dashboard');
   const tc = useTranslations('common');
+
+  const isPooledMode = data?.venue?.distributionMode === "POOLED";
 
   useEffect(() => {
     fetchDashboard();
@@ -121,8 +141,8 @@ export default function VenueDashboardPage() {
         </SelectContent>
       </Select>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Metrics Grid - Conditional based on distribution mode */}
+      <div className={`grid gap-4 ${isPooledMode ? 'grid-cols-3' : 'grid-cols-2 lg:grid-cols-4'}`}>
         <Card className="glass p-4">
           <div className="flex items-center gap-2 text-muted-foreground mb-1">
             <Banknote className="h-4 w-4" />
@@ -147,17 +167,41 @@ export default function VenueDashboardPage() {
           <div className="text-xl font-bold">{formatCurrency(data.metrics.averageTip)}</div>
         </Card>
         
-        <Card className="glass p-4">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-            <Users className="h-4 w-4" />
-            <span className="text-xs">{t('activeStaff')}</span>
-          </div>
-          <div className="text-xl font-bold">{data.metrics.activeStaff}</div>
-        </Card>
+        {/* Active Staff - Only show for PERSONAL mode */}
+        {!isPooledMode && (
+          <Card className="glass p-4">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <Users className="h-4 w-4" />
+              <span className="text-xs">{t('activeStaff')}</span>
+            </div>
+            <div className="text-xl font-bold">{data.metrics.activeStaff}</div>
+          </Card>
+        )}
       </div>
 
-      {/* Pending Payouts Alert */}
-      {data.hasPendingPayouts && (
+      {/* No Staff Alert - Show for PERSONAL mode when no active staff */}
+      {!isPooledMode && data.metrics.activeStaff === 0 && (
+        <Card className="glass p-4 border-primary/30 bg-primary/10">
+          <div className="flex items-center gap-3">
+            <Users className="h-5 w-5 text-primary flex-shrink-0" />
+            <div className="flex-1">
+              <div className="font-medium">Добавьте сотрудников</div>
+              <div className="text-sm text-muted-foreground">
+                Для начала работы добавьте хотя бы одного сотрудника
+              </div>
+            </div>
+            <Button 
+              size="sm"
+              onClick={() => router.push("/venue/staff")}
+            >
+              Добавить
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {/* Pending Payouts Alert - Only show for PERSONAL mode */}
+      {!isPooledMode && data.hasPendingPayouts && data.metrics.activeStaff > 0 && (
         <Card className="glass p-4 border-yellow-500/30 bg-yellow-500/10">
           <div className="flex items-center gap-3">
             <AlertCircle className="h-5 w-5 text-yellow-500 flex-shrink-0" />
@@ -177,39 +221,84 @@ export default function VenueDashboardPage() {
         </Card>
       )}
 
-      {/* Top Staff */}
-      <Card className="glass p-4">
-        <h2 className="font-semibold mb-4">{t('topPerformers')}</h2>
-        {data.topStaff.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-4">
-            No tips yet this period
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {data.topStaff.map((staff, index) => (
-              <div
-                key={staff.id}
-                className="flex items-center gap-3 p-3 bg-white/5 rounded-xl"
-              >
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold">
-                  {index + 1}
-                </div>
-                <div className="flex-1">
-                  <div className="font-medium">{staff.displayName}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {staff.tipsCount} {t('tips')}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-semibold text-primary">
-                    {formatCurrency(staff.totalTips)}
-                  </div>
-                </div>
-              </div>
-            ))}
+      {/* Content based on distribution mode */}
+      {isPooledMode ? (
+        /* Tip History for POOLED mode - replaces Top Staff */
+        <Card className="glass p-4">
+          <div className="flex items-center gap-2 mb-4">
+            <History className="h-5 w-5 text-primary" />
+            <h2 className="font-semibold">История чаевых</h2>
           </div>
-        )}
-      </Card>
+          {data.topStaff.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              Нет чаевых за этот период
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {/* Show recent tips as history */}
+              {data.recentTips && data.recentTips.length > 0 ? (
+                data.recentTips.map((tip) => (
+                  <div
+                    key={tip.id}
+                    className="flex items-center justify-between p-3 bg-white/5 rounded-xl"
+                  >
+                    <div className="text-sm text-muted-foreground">
+                      {formatDate(tip.createdAt)}
+                    </div>
+                    <div className="font-semibold text-primary">
+                      {formatCurrency(tip.amount)}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                /* Fallback: show aggregated data */
+                <div className="text-center py-4">
+                  <div className="text-2xl font-bold text-primary mb-2">
+                    {formatCurrency(data.metrics.totalTips)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {data.metrics.transactionCount} транзакций за период
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </Card>
+      ) : (
+        /* Top Staff for PERSONAL mode */
+        <Card className="glass p-4">
+          <h2 className="font-semibold mb-4">{t('topPerformers')}</h2>
+          {data.topStaff.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              No tips yet this period
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {data.topStaff.map((staff, index) => (
+                <div
+                  key={staff.id}
+                  className="flex items-center gap-3 p-3 bg-white/5 rounded-xl"
+                >
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium">{staff.displayName}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {staff.tipsCount} {t('tips')}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-semibold text-primary">
+                      {formatCurrency(staff.totalTips)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      )}
     </div>
   );
 }

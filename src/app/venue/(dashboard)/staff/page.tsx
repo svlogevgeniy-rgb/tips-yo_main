@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -34,9 +34,8 @@ import {
 const staffSchema = z.object({
   displayName: z.string().min(1, "Display name is required"),
   fullName: z.string().optional(),
-  role: z.enum(["WAITER", "BARTENDER", "BARISTA", "HOSTESS", "OTHER"]),
-  phone: z.string().optional(),
-  email: z.string().email().optional().or(z.literal("")),
+  role: z.enum(["WAITER", "BARTENDER", "BARISTA", "HOSTESS", "CHEF", "ADMINISTRATOR", "OTHER"]),
+  avatarUrl: z.string().optional(),
   participatesInPool: z.boolean(),
 });
 
@@ -49,17 +48,48 @@ type Staff = {
   role: string;
   status: string;
   participatesInPool: boolean;
+  avatarUrl?: string | null;
+  balance?: number;
   qrCode?: { id: string; shortCode: string; status: string };
   user?: { email?: string; phone?: string };
   _count?: { tips: number };
 };
 
+// Avatar component with fallback
+function StaffAvatar({ staff }: { staff: Staff }) {
+  if (staff.avatarUrl) {
+    return (
+      <img 
+        src={staff.avatarUrl} 
+        alt={staff.displayName}
+        className="w-12 h-12 rounded-full object-cover"
+      />
+    );
+  }
+  
+  // Fallback avatar with initials
+  const initials = staff.displayName
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+    
+  return (
+    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+      <span className="text-primary font-semibold">{initials || <User className="h-5 w-5" />}</span>
+    </div>
+  );
+}
+
 const roleLabels: Record<string, string> = {
-  WAITER: "Waiter",
-  BARTENDER: "Bartender",
-  BARISTA: "Barista",
-  HOSTESS: "Hostess",
-  OTHER: "Other",
+  WAITER: "Официант",
+  BARTENDER: "Бармен",
+  BARISTA: "Бариста",
+  HOSTESS: "Хостес",
+  CHEF: "Повар",
+  ADMINISTRATOR: "Администратор",
+  OTHER: "Другое",
 };
 
 
@@ -77,8 +107,7 @@ export default function StaffManagementPage() {
       displayName: "",
       fullName: "",
       role: "WAITER",
-      phone: "",
-      email: "",
+      avatarUrl: "",
       participatesInPool: true,
     },
   });
@@ -158,6 +187,21 @@ export default function StaffManagementPage() {
     }
   };
 
+  const handleDeleteStaff = async (staffMember: Staff) => {
+    if (!confirm(`Удалить сотрудника ${staffMember.displayName}?`)) return;
+    
+    try {
+      const response = await fetch(`/api/staff/${staffMember.id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setStaff(staff.filter((s) => s.id !== staffMember.id));
+      }
+    } catch (err) {
+      console.error("Failed to delete staff:", err);
+    }
+  };
+
   if (isPageLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -225,7 +269,7 @@ export default function StaffManagementPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role">Role *</Label>
+                <Label htmlFor="role">Роль *</Label>
                 <Select
                   onValueChange={(value) =>
                     form.setValue("role", value as StaffForm["role"])
@@ -233,38 +277,31 @@ export default function StaffManagementPage() {
                   defaultValue="WAITER"
                 >
                   <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Select role" />
+                    <SelectValue placeholder="Выберите роль" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="WAITER">Waiter</SelectItem>
-                    <SelectItem value="BARTENDER">Bartender</SelectItem>
-                    <SelectItem value="BARISTA">Barista</SelectItem>
-                    <SelectItem value="HOSTESS">Hostess</SelectItem>
-                    <SelectItem value="OTHER">Other</SelectItem>
+                    <SelectItem value="WAITER">Официант</SelectItem>
+                    <SelectItem value="BARISTA">Бариста</SelectItem>
+                    <SelectItem value="BARTENDER">Бармен</SelectItem>
+                    <SelectItem value="HOSTESS">Хостес</SelectItem>
+                    <SelectItem value="CHEF">Повар</SelectItem>
+                    <SelectItem value="ADMINISTRATOR">Администратор</SelectItem>
+                    <SelectItem value="OTHER">Другое</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    placeholder="+62..."
-                    {...form.register("phone")}
-                    className="h-12"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="staff@example.com"
-                    {...form.register("email")}
-                    className="h-12"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="avatarUrl">Фото (опционально)</Label>
+                <Input
+                  id="avatarUrl"
+                  placeholder="URL фото или оставьте пустым"
+                  {...form.register("avatarUrl")}
+                  className="h-12"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Если не указано, будет показана заглушка-аватар
+                </p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -317,14 +354,17 @@ export default function StaffManagementPage() {
             <Card key={member.id} className="glass">
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="font-heading">
-                      {member.displayName}
-                    </CardTitle>
-                    <CardDescription>
-                      {roleLabels[member.role]} •{" "}
-                      {member.qrCode?.shortCode || "No QR"}
-                    </CardDescription>
+                  <div className="flex items-center gap-3">
+                    <StaffAvatar staff={member} />
+                    <div>
+                      <CardTitle className="font-heading">
+                        {member.displayName}
+                      </CardTitle>
+                      <CardDescription>
+                        {roleLabels[member.role] || member.role} •{" "}
+                        {member.qrCode?.shortCode || "No QR"}
+                      </CardDescription>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span
@@ -334,25 +374,34 @@ export default function StaffManagementPage() {
                           : "bg-gray-500/20 text-gray-400"
                       }`}
                     >
-                      {member.status}
+                      {member.status === "ACTIVE" ? "Активен" : "Неактивен"}
                     </span>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleToggleStatus(member)}
                     >
-                      {member.status === "ACTIVE" ? "Deactivate" : "Activate"}
+                      {member.status === "ACTIVE" ? "Деактивировать" : "Активировать"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteStaff(member)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="flex gap-4 text-sm text-muted-foreground">
-                  {member.user?.phone && <span>📱 {member.user.phone}</span>}
-                  {member.user?.email && <span>✉️ {member.user.email}</span>}
-                  {member.participatesInPool && <span>🎱 In pool</span>}
+                  {member.participatesInPool && <span>🎱 В пуле</span>}
                   {member._count?.tips !== undefined && (
-                    <span>💰 {member._count.tips} tips</span>
+                    <span>💰 {member._count.tips} чаевых</span>
+                  )}
+                  {member.balance !== undefined && member.balance > 0 && (
+                    <span className="text-primary">💵 Баланс: Rp {member.balance.toLocaleString()}</span>
                   )}
                 </div>
               </CardContent>

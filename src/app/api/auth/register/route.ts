@@ -2,12 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
+import { encryptKey } from "@/lib/midtrans";
+import { generateShortCode } from "@/lib/qr";
 
 const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   venueName: z.string().min(2, "Venue name must be at least 2 characters"),
   venueType: z.enum(["RESTAURANT", "CAFE", "BAR", "COFFEE_SHOP", "OTHER"]),
+  distributionMode: z.enum(["POOLED", "PERSONAL"]).optional(),
+  midtrans: z.object({
+    clientKey: z.string(),
+    serverKey: z.string(),
+    merchantId: z.string(),
+  }).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -22,7 +30,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password, venueName, venueType } = parsed.data;
+    const { email, password, venueName, venueType, distributionMode, midtrans } = parsed.data;
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -39,6 +47,11 @@ export async function POST(request: NextRequest) {
     // Hash password
     const passwordHash = await bcrypt.hash(password, 12);
 
+    // Encrypt server key if provided
+    const encryptedServerKey = midtrans?.serverKey 
+      ? encryptKey(midtrans.serverKey) 
+      : null;
+
     // Create user and venue in transaction
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
@@ -54,9 +67,28 @@ export async function POST(request: NextRequest) {
           name: venueName,
           type: venueType,
           managerId: user.id,
-          status: "DRAFT",
+          status: midtrans ? "ACTIVE" : "DRAFT",
+          distributionMode: distributionMode || "PERSONAL",
+          // Midtrans credentials
+          midtransMerchantId: midtrans?.merchantId || null,
+          midtransServerKey: encryptedServerKey,
+          midtransClientKey: midtrans?.clientKey || null,
+          midtransConnected: !!midtrans,
         },
       });
+
+      // Auto-generate venue QR for POOLED mode
+      if (distributionMode === "POOLED") {
+        await tx.qrCode.create({
+          data: {
+            venueId: venue.id,
+            type: "VENUE",
+            label: venueName,
+            shortCode: generateShortCode(),
+            status: "ACTIVE",
+          },
+        });
+      }
 
       return { user, venue };
     });

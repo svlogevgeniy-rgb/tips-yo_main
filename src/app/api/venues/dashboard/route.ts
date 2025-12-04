@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
 // Mock data for development
-function generateMockDashboard(period: string) {
+function generateMockDashboard(period: string, distributionMode: string = "PERSONAL") {
   const multiplier = period === "today" ? 0.15 : period === "week" ? 1 : 4;
   
   return {
     venue: {
       id: "venue-001",
       name: "Cafe Organic Canggu",
+      distributionMode,
     },
     metrics: {
       totalTips: Math.round(5200000 * multiplier),
@@ -115,7 +116,7 @@ export async function GET(request: NextRequest) {
       });
 
       return NextResponse.json({
-        venue: { id: venue.id, name: venue.name },
+        venue: { id: venue.id, name: venue.name, distributionMode: venue.distributionMode },
         metrics: {
           totalTips,
           transactionCount,

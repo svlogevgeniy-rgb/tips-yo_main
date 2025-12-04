@@ -60,7 +60,7 @@ function TipFlowAnimation() {
                   key={amt}
                   animate={{ 
                     scale: tips[step].amount === amt ? 1.1 : 1,
-                    backgroundColor: tips[step].amount === amt ? "rgb(30 95 75)" : "rgb(243 244 246)"
+                    backgroundColor: tips[step].amount === amt ? "rgb(14 165 233)" : "rgb(243 244 246)"
                   }}
                   className="h-10 rounded-lg flex items-center justify-center text-sm font-medium"
                   style={{ color: tips[step].amount === amt ? "white" : "rgb(17 24 39)" }}
@@ -152,20 +152,20 @@ export default function Home() {
       <div className="fixed inset-0 -z-10 bg-background" />
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-primary border-b border-white/10">
+      <header className="fixed top-0 left-0 right-0 z-50 glass-heavy border-b border-white/10">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Link href="/" className="text-xl font-heading font-bold text-white">
+            <Link href="/" className="text-xl font-heading font-bold text-gradient">
               Tipsio
             </Link>
-            <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] bg-white/20 text-white rounded-full">
+            <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] bg-primary/20 text-primary rounded-full">
               {t('betaBadge')}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <Link href="/venue/login" className="hidden sm:block">
-              <Button variant="ghost" size="sm" className="text-white/80 hover:text-white text-sm">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground text-sm">
                 {t('footer.venueLogin')}
               </Button>
             </Link>
@@ -214,7 +214,7 @@ export default function Home() {
                 className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-4"
               >
                 <Link href="/venue/register">
-                  <Button size="lg" className="w-full sm:w-auto h-12 px-6 text-base font-heading font-bold bg-white text-primary hover:bg-white/90 hover:scale-105 transition-transform rounded-full">
+                  <Button size="lg" className="w-full sm:w-auto h-12 px-6 text-base font-heading font-bold bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-transform rounded-full">
                     {t('hero.primaryCta')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -222,7 +222,7 @@ export default function Home() {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="w-full sm:w-auto h-12 px-6 text-base font-heading bg-black text-white border-black hover:bg-black/80 rounded-full"
+                  className="w-full sm:w-auto h-12 px-6 text-base font-heading border-white/20 text-foreground hover:bg-white/10 rounded-full"
                   onClick={() => scrollToSection('how-it-works')}
                 >
                   {t('hero.secondaryCta')}
@@ -548,13 +548,13 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/venue/register">
-                <Button size="lg" className="w-full sm:w-auto h-12 px-6 text-base font-heading font-bold bg-white text-primary hover:bg-white/90 hover:scale-105 transition-transform rounded-full">
+                <Button size="lg" className="w-full sm:w-auto h-12 px-6 text-base font-heading font-bold bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-transform rounded-full">
                   {t('finalCta.primaryCta')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <a href="https://wa.me/message/your-whatsapp" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-6 text-base font-heading bg-black text-white border-black hover:bg-black/80 rounded-full">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-6 text-base font-heading border-white/20 text-foreground hover:bg-white/10 rounded-full">
                   <MessageCircle className="mr-2 h-4 w-4" />
                   {t('finalCta.secondaryCta')}
                 </Button>
@@ -568,16 +568,16 @@ export default function Home() {
       <footer className="py-8 px-4 border-t border-white/10">
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-2xl font-heading font-bold text-white">Tipsio</div>
-            <div className="flex gap-6 text-sm text-white/70">
-              <Link href="/staff/login" className="hover:text-white transition-colors">
+            <div className="text-2xl font-heading font-bold text-gradient">Tipsio</div>
+            <div className="flex gap-6 text-sm text-muted-foreground">
+              <Link href="/staff/login" className="hover:text-foreground transition-colors">
                 {t('footer.staffLogin')}
               </Link>
-              <Link href="/venue/login" className="hover:text-white transition-colors">
+              <Link href="/venue/login" className="hover:text-foreground transition-colors">
                 {t('footer.venueLogin')}
               </Link>
             </div>
-            <p className="text-sm text-white/70">
+            <p className="text-sm text-muted-foreground">
               © 2025 Tipsio. Bali, Indonesia
             </p>
           </div>

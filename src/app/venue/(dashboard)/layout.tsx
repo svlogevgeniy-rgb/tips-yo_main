@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -18,18 +18,46 @@ import {
   X,
 } from "lucide-react";
 
+type DistributionMode = "POOLED" | "PERSONAL";
+
+interface VenueData {
+  distributionMode: DistributionMode;
+}
+
 export default function VenueLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [venueData, setVenueData] = useState<VenueData | null>(null);
   const t = useTranslations('venue.dashboard');
 
-  const navItems = [
-    { href: "/venue/dashboard", label: t('title').split(' ')[0] || "Dashboard", icon: LayoutDashboard },
-    { href: "/venue/staff", label: t('manageStaff').split(' ')[0] || "Staff", icon: Users },
-    { href: "/venue/qr-codes", label: t('printQR').split(' ')[0] || "QR", icon: QrCode },
-    { href: "/venue/payouts", label: t('goToPayouts').split(' ')[0] || "Payouts", icon: Wallet },
-    { href: "/venue/settings", label: "Settings", icon: Settings },
+  // Fetch venue data to get distribution mode
+  useEffect(() => {
+    async function fetchVenueData() {
+      try {
+        const response = await fetch("/api/venues/dashboard");
+        if (response.ok) {
+          const data = await response.json();
+          setVenueData({ distributionMode: data.venue?.distributionMode || "PERSONAL" });
+        }
+      } catch (error) {
+        console.error("Failed to fetch venue data:", error);
+      }
+    }
+    fetchVenueData();
+  }, []);
+
+  const allNavItems = [
+    { href: "/venue/dashboard", label: t('title').split(' ')[0] || "Dashboard", icon: LayoutDashboard, showFor: ["POOLED", "PERSONAL"] },
+    { href: "/venue/staff", label: t('manageStaff').split(' ')[0] || "Staff", icon: Users, showFor: ["PERSONAL"] },
+    { href: "/venue/qr-codes", label: t('printQR').split(' ')[0] || "QR", icon: QrCode, showFor: ["POOLED", "PERSONAL"] },
+    { href: "/venue/payouts", label: t('goToPayouts').split(' ')[0] || "Payouts", icon: Wallet, showFor: ["PERSONAL"] },
+    { href: "/venue/settings", label: "Settings", icon: Settings, showFor: ["POOLED", "PERSONAL"] },
   ];
+
+  // Filter nav items based on distribution mode
+  const navItems = allNavItems.filter(item => 
+    item.showFor.includes(venueData?.distributionMode || "PERSONAL")
+  );
 
   return (
     <div className="min-h-screen relative">

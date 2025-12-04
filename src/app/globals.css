@@ -4,47 +4,47 @@
 
 @layer base {
   :root {
-    /* Основной фон - тёмно-зелёный как tips'yo */
-    --background: 160 52% 24%; /* #1E5F4B */
-    --foreground: 0 0% 100%; /* белый */
+    /* Основной фон - глубокий океан */
+    --background: 222 47% 5%; /* #020617 */
+    --foreground: 210 40% 98%; /* #F9FAFB */
 
-    /* Карточки - светлые */
-    --card: 0 0% 100%; /* белый */
-    --card-foreground: 160 52% 15%; /* тёмно-зелёный текст */
+    /* Карточки (полупрозрачные для эффекта стекла) */
+    --card: 222 47% 7%; /* Чуть светлее фона */
+    --card-foreground: 210 40% 98%;
  
     /* Popovers / Модалки */
-    --popover: 0 0% 100%;
-    --popover-foreground: 160 52% 15%;
+    --popover: 222 47% 5%;
+    --popover-foreground: 210 40% 98%;
 
-    /* Primary: Зелёный (#1E5F4B) */
-    --primary: 160 52% 24%; 
-    --primary-foreground: 0 0% 100%;
+    /* Primary: Бирюза (#0EA5E9) - цвет океана/бассейна */
+    --primary: 199 89% 48%; 
+    --primary-foreground: 222 47% 7%; /* Темный текст на яркой кнопке */
 
-    /* Secondary: Чёрный для кнопок */
-    --secondary: 0 0% 10%; 
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary/Accent: Коралл (#F97373) - закаты и тепло */
+    --secondary: 0 91% 71%; 
+    --secondary-foreground: 222 47% 5%;
 
     /* Muted: Для второстепенного текста */
-    --muted: 160 20% 90%;
-    --muted-foreground: 160 20% 40%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%; /* #6B7280 */
 
     /* Accents for interaction */
-    --accent: 160 40% 95%;
-    --accent-foreground: 160 52% 20%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
 
     /* Destructive / Success */
     --destructive: 0 84% 60%; /* #EF4444 */
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 210 40% 98%;
     --success: 142 71% 45%; /* #22C55E */
 
     /* Borders & Inputs */
-    --border: 160 20% 85%;
-    --input: 160 20% 90%;
-    --ring: 160 52% 24%; /* Цвет фокуса совпадает с Primary */
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 199 89% 48%; /* Цвет фокуса совпадает с Primary */
 
     /* Charts */
-    --chart-1: 160 52% 24%;
-    --chart-2: 160 40% 40%;
+    --chart-1: 199 89% 48%;
+    --chart-2: 0 91% 71%;
     --chart-3: 142 71% 45%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
@@ -69,29 +69,19 @@
     text-wrap: balance;
   }
 
-  /* Утилита для карточек на зелёном фоне */
+  /* Утилита для Стекла (Glassmorphism) */
   .glass {
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-    color: hsl(160 52% 15%);
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl;
   }
   
-  /* Утилита для модалок */
+  /* Утилита для сильного стекла (для модалок) */
   .glass-heavy {
-    background-color: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(24px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: hsl(160 52% 15%);
+    @apply bg-[#020617]/80 backdrop-blur-xl border border-white/5;
   }
 
-  /* Живой градиент текста - зелёный */
+  /* Живой градиент текста */
   .text-gradient {
-    background: linear-gradient(to right, #1E5F4B, #2D8B6F);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#0EA5E9] to-[#F97373];
   }
 
   /* Анимация пульсации для фоновых элементов */

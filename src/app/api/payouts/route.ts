@@ -1,55 +1,53 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
-const PLATFORM_FEE_PERCENT = 5;
-
-// Mock data for development
-function generateMockPayouts(start: string, end: string) {
-  const staffPayouts = [
-    { staffId: "staff-001", displayName: "Agung", role: "Waiter", tipsCount: 24, grossAmount: 850000 },
-    { staffId: "staff-002", displayName: "Wayan", role: "Barista", tipsCount: 21, grossAmount: 720000 },
-    { staffId: "staff-003", displayName: "Ketut", role: "Bartender", tipsCount: 19, grossAmount: 680000 },
-    { staffId: "staff-004", displayName: "Made", role: "Waiter", tipsCount: 15, grossAmount: 520000 },
-  ].map((s) => ({
-    ...s,
-    platformFee: Math.ceil(s.grossAmount * (PLATFORM_FEE_PERCENT / 100)),
-    netAmount: s.grossAmount - Math.ceil(s.grossAmount * (PLATFORM_FEE_PERCENT / 100)),
-    status: "PENDING" as const,
-  }));
-
-  const totalGross = staffPayouts.reduce((sum, s) => sum + s.grossAmount, 0);
-  const totalFee = staffPayouts.reduce((sum, s) => sum + s.platformFee, 0);
-  const totalNet = staffPayouts.reduce((sum, s) => sum + s.netAmount, 0);
-
+// Mock data for development - staff with accumulated balances
+function generateMockStaffBalances() {
   return {
-    id: `payout-${start}-${end}`,
-    periodStart: start,
-    periodEnd: end,
-    totalGross,
-    totalFee,
-    totalNet,
-    status: "PENDING" as const,
-    staffPayouts,
+    staff: [
+      { 
+        id: "staff-001", 
+        displayName: "Agung", 
+        role: "Официант", 
+        avatarUrl: null,
+        balance: 850000, 
+        tipsCount: 24 
+      },
+      { 
+        id: "staff-002", 
+        displayName: "Wayan", 
+        role: "Бариста", 
+        avatarUrl: null,
+        balance: 720000, 
+        tipsCount: 21 
+      },
+      { 
+        id: "staff-003", 
+        displayName: "Ketut", 
+        role: "Бармен", 
+        avatarUrl: null,
+        balance: 680000, 
+        tipsCount: 19 
+      },
+      { 
+        id: "staff-004", 
+        displayName: "Made", 
+        role: "Официант", 
+        avatarUrl: null,
+        balance: 0, 
+        tipsCount: 15 
+      },
+    ],
   };
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await auth();
-    const { searchParams } = new URL(request.url);
-    const start = searchParams.get("start");
-    const end = searchParams.get("end");
-
-    if (!start || !end) {
-      return NextResponse.json(
-        { error: "start and end dates required" },
-        { status: 400 }
-      );
-    }
 
     // For development, return mock data
     if (!session) {
-      return NextResponse.json(generateMockPayouts(start, end));
+      return NextResponse.json(generateMockStaffBalances());
     }
 
     // In production, fetch real data
@@ -67,130 +65,38 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      const startDate = new Date(start);
-      const endDate = new Date(end);
-      endDate.setHours(23, 59, 59, 999);
-
-      // Get or create payout for this period
-      let payout = await prisma.payout.findFirst({
-        where: {
+      // Get all staff with their balances
+      const staff = await prisma.staff.findMany({
+        where: { 
           venueId: venue.id,
-          periodStart: startDate,
-          periodEnd: endDate,
+          status: "ACTIVE",
         },
-        include: {
-          allocations: {
-            include: {
-              staff: true,
-              tip: true,
-            },
+        select: {
+          id: true,
+          displayName: true,
+          role: true,
+          avatarUrl: true,
+          balance: true,
+          _count: {
+            select: { allocations: true },
           },
         },
+        orderBy: { balance: "desc" },
       });
 
-      if (!payout) {
-        // Calculate allocations for this period
-        const allocations = await prisma.tipAllocation.findMany({
-          where: {
-            staff: { venueId: venue.id },
-            date: { gte: startDate, lte: endDate },
-            payoutId: null,
-          },
-          include: {
-            staff: true,
-            tip: true,
-          },
-        });
-
-        // Group by staff
-        const staffTotals: Record<string, {
-          staffId: string;
-          displayName: string;
-          role: string;
-          tipsCount: number;
-          grossAmount: number;
-        }> = {};
-
-        for (const allocation of allocations) {
-          if (!staffTotals[allocation.staffId]) {
-            staffTotals[allocation.staffId] = {
-              staffId: allocation.staffId,
-              displayName: allocation.staff.displayName,
-              role: allocation.staff.role,
-              tipsCount: 0,
-              grossAmount: 0,
-            };
-          }
-          staffTotals[allocation.staffId].tipsCount += 1;
-          staffTotals[allocation.staffId].grossAmount += allocation.amount;
-        }
-
-        const staffPayouts = Object.values(staffTotals).map((s) => ({
-          ...s,
-          platformFee: Math.ceil(s.grossAmount * (PLATFORM_FEE_PERCENT / 100)),
-          netAmount: s.grossAmount - Math.ceil(s.grossAmount * (PLATFORM_FEE_PERCENT / 100)),
-          status: "PENDING" as const,
-        }));
-
-        const totalGross = staffPayouts.reduce((sum, s) => sum + s.grossAmount, 0);
-        const totalFee = staffPayouts.reduce((sum, s) => sum + s.platformFee, 0);
-        const totalNet = staffPayouts.reduce((sum, s) => sum + s.netAmount, 0);
-
-        return NextResponse.json({
-          id: null,
-          periodStart: start,
-          periodEnd: end,
-          totalGross,
-          totalFee,
-          totalNet,
-          status: "PENDING",
-          staffPayouts,
-        });
-      }
-
-      // Group existing payout allocations by staff
-      const staffTotals: Record<string, {
-        staffId: string;
-        displayName: string;
-        role: string;
-        tipsCount: number;
-        grossAmount: number;
-      }> = {};
-
-      for (const allocation of payout.allocations) {
-        if (!staffTotals[allocation.staffId]) {
-          staffTotals[allocation.staffId] = {
-            staffId: allocation.staffId,
-            displayName: allocation.staff.displayName,
-            role: allocation.staff.role,
-            tipsCount: 0,
-            grossAmount: 0,
-          };
-        }
-        staffTotals[allocation.staffId].tipsCount += 1;
-        staffTotals[allocation.staffId].grossAmount += allocation.amount;
-      }
-
-      const staffPayouts = Object.values(staffTotals).map((s) => ({
-        ...s,
-        platformFee: Math.ceil(s.grossAmount * (PLATFORM_FEE_PERCENT / 100)),
-        netAmount: s.grossAmount - Math.ceil(s.grossAmount * (PLATFORM_FEE_PERCENT / 100)),
-        status: payout!.status,
-      }));
-
       return NextResponse.json({
-        id: payout.id,
-        periodStart: payout.periodStart.toISOString(),
-        periodEnd: payout.periodEnd.toISOString(),
-        totalGross: payout.totalAmount,
-        totalFee: Math.ceil(payout.totalAmount * (PLATFORM_FEE_PERCENT / 100)),
-        totalNet: payout.totalAmount - Math.ceil(payout.totalAmount * (PLATFORM_FEE_PERCENT / 100)),
-        status: payout.status,
-        staffPayouts,
+        staff: staff.map(s => ({
+          id: s.id,
+          displayName: s.displayName,
+          role: s.role,
+          avatarUrl: s.avatarUrl,
+          balance: s.balance,
+          tipsCount: s._count.allocations,
+        })),
       });
     } catch {
       // Database not available, return mock data
-      return NextResponse.json(generateMockPayouts(start, end));
+      return NextResponse.json(generateMockStaffBalances());
     }
   } catch (error) {
     console.error("Payouts error:", error);
