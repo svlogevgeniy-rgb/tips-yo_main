@@ -1,58 +1,64 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AuroraBackground } from "@/components/layout/aurora-background";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { useTranslations } from "@/i18n/client";
 import { XCircle, RefreshCw, ArrowLeft } from "lucide-react";
 
 export default function TipErrorPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get("order_id");
+  const t = useTranslations("guest.error");
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <AuroraBackground />
-      
-      <Card className="glass p-8 text-center max-w-sm w-full">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col">
+      {/* Header */}
+      <header className="px-4 py-3 flex justify-end">
+        <LanguageSwitcher />
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
         {/* Error Icon */}
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-destructive/20 flex items-center justify-center">
-          <XCircle className="w-12 h-12 text-destructive" />
+        <div className="w-24 h-24 mb-6 rounded-full bg-gradient-to-br from-red-500/30 to-orange-500/30 flex items-center justify-center ring-4 ring-red-500/20">
+          <XCircle className="w-14 h-14 text-red-400" />
         </div>
 
         {/* Content */}
-        <h1 className="text-2xl font-bold mb-2">Payment didn&apos;t go through</h1>
-        <p className="text-muted-foreground mb-6">
-          Something went wrong and your tip was not completed. This can happen due to network or bank issues.
-        </p>
+        <h1 className="text-2xl font-bold mb-2 text-center">{t("title")}</h1>
+        <p className="text-slate-400 text-center mb-8 max-w-xs">{t("message")}</p>
 
         {/* Actions */}
-        <div className="space-y-3">
+        <div className="w-full max-w-xs space-y-3">
           <Button
-            className="w-full bg-gradient-to-r from-cyan-500 to-blue-600"
+            className="w-full h-12 font-bold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 rounded-xl"
             onClick={() => router.back()}
           >
             <RefreshCw className="w-4 h-4 mr-2" />
-            Try again
+            {t("tryAgain")}
           </Button>
-          
+
           <Button
             variant="ghost"
-            className="w-full"
+            className="w-full text-slate-400 hover:text-white"
             onClick={() => router.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to amount selection
+            {t("backToAmount")}
           </Button>
         </div>
 
         {orderId && (
-          <p className="text-xs text-muted-foreground mt-6">
-            Reference: {orderId}
-          </p>
+          <p className="text-xs text-slate-600 mt-8">Reference: {orderId}</p>
         )}
-      </Card>
+      </main>
+
+      {/* Footer */}
+      <footer className="p-4 text-center">
+        <p className="text-[10px] text-slate-600">Powered by Tipsio</p>
+      </footer>
     </div>
   );
 }

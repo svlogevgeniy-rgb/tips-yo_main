@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
@@ -17,8 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AuroraBackground } from "@/components/layout/aurora-background";
-import { Loader2, User, Users, ChevronRight } from "lucide-react";
+import { Loader2, User, Users, Heart, ChevronRight } from "lucide-react";
 
 interface Staff {
   id: string;
@@ -64,7 +62,7 @@ function formatShortAmount(amount: number): string {
 export default function TipPage() {
   const params = useParams();
   const shortCode = params.shortCode as string;
-  const t = useTranslations('guest.tip');
+  const t = useTranslations("guest.tip");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,7 +94,6 @@ export default function TipPage() {
       const data = await res.json();
       setQrData(data);
 
-      // Set default tip target based on QR type
       if (data.type === "PERSONAL" && data.staff) {
         setTipTarget("staff");
         setSelectedStaffId(data.staff.id);
@@ -108,19 +105,23 @@ export default function TipPage() {
     }
   }
 
-  const finalAmount = selectedAmount || (customAmount ? parseInt(customAmount) : 0);
+  const finalAmount =
+    selectedAmount || (customAmount ? parseInt(customAmount) : 0);
   const platformFee = Math.ceil(finalAmount * (PLATFORM_FEE_PERCENT / 100));
   const totalAmount = coverFee ? finalAmount + platformFee : finalAmount;
 
   const isPersonalQr = qrData?.type === "PERSONAL";
-  // Show staff choice for PERSONAL distribution mode (venue-level QR) or when allowStaffChoice is enabled
   const isPersonalDistribution = qrData?.venue.distributionMode === "PERSONAL";
-  const showStaffChoice = !isPersonalQr && (isPersonalDistribution || qrData?.venue.allowStaffChoice) && qrData?.availableStaff && qrData.availableStaff.length > 0;
+  const showStaffChoice =
+    !isPersonalQr &&
+    (isPersonalDistribution || qrData?.venue.allowStaffChoice) &&
+    qrData?.availableStaff &&
+    qrData.availableStaff.length > 0;
   const targetStaff = isPersonalQr
     ? qrData?.staff
     : tipTarget === "staff"
-    ? qrData?.availableStaff.find((s) => s.id === selectedStaffId)
-    : null;
+      ? qrData?.availableStaff.find((s) => s.id === selectedStaffId)
+      : null;
 
   async function handleSubmit() {
     if (!finalAmount || finalAmount < 1000) return;
@@ -145,7 +146,6 @@ export default function TipPage() {
 
       const { snapToken, redirectUrl } = await res.json();
 
-      // Redirect to Midtrans Snap or payment page
       if (redirectUrl) {
         window.location.href = redirectUrl;
       } else if (snapToken && window.snap) {
@@ -160,157 +160,147 @@ export default function TipPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <AuroraBackground />
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
       </div>
     );
   }
 
   if (error || !qrData) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <AuroraBackground />
-        <Card className="glass p-6 text-center max-w-sm">
-          <h1 className="text-xl font-semibold mb-2">Oops!</h1>
-          <p className="text-muted-foreground">{error || "QR code not found"}</p>
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+        <Card className="bg-white/5 backdrop-blur border-white/10 p-6 text-center max-w-sm">
+          <h1 className="text-xl font-semibold mb-2 text-white">Oops!</h1>
+          <p className="text-slate-400">{error || "QR code not found"}</p>
         </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <AuroraBackground />
-      
-      {/* Header */}
-      <header className="p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+      {/* Compact Header */}
+      <header className="px-4 py-3 flex items-center justify-between border-b border-white/5">
+        <div className="flex items-center gap-2">
           {qrData.venue.logoUrl ? (
             <Image
               src={qrData.venue.logoUrl}
               alt={qrData.venue.name}
-              width={40}
-              height={40}
+              width={32}
+              height={32}
               className="rounded-lg"
             />
           ) : (
-            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-              <span className="text-primary font-bold">
+            <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+              <span className="text-cyan-400 font-bold text-sm">
                 {qrData.venue.name.charAt(0)}
               </span>
             </div>
           )}
-          <span className="font-medium">{qrData.venue.name}</span>
+          <span className="font-medium text-sm text-slate-200">
+            {qrData.venue.name}
+          </span>
         </div>
         <LanguageSwitcher />
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 px-4 pb-40">
-        {/* Hero Block */}
-        <div className="text-center mb-8">
+      <main className="px-4 pt-6 pb-32">
+        {/* Hero - Compact */}
+        <div className="text-center mb-6">
           {isPersonalQr && qrData.staff ? (
             <>
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-cyan-500/30 to-blue-500/30 flex items-center justify-center ring-2 ring-cyan-500/20 overflow-hidden">
                 {qrData.staff.avatarUrl ? (
                   <Image
                     src={qrData.staff.avatarUrl}
                     alt={qrData.staff.displayName}
-                    width={80}
-                    height={80}
+                    width={64}
+                    height={64}
                     className="object-cover"
                   />
                 ) : (
-                  <User className="w-10 h-10 text-primary" />
+                  <User className="w-8 h-8 text-cyan-400" />
                 )}
               </div>
-              <h1 className="text-2xl font-bold mb-2">
-                {t('title', { name: qrData.staff.displayName })}
+              <h1 className="text-xl font-bold mb-1">
+                {t("title", { name: qrData.staff.displayName })}
               </h1>
             </>
           ) : (
             <>
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
-                <Users className="w-10 h-10 text-primary" />
+              <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-cyan-500/30 to-blue-500/30 flex items-center justify-center ring-2 ring-cyan-500/20">
+                <Heart className="w-8 h-8 text-cyan-400" />
               </div>
-              <h1 className="text-2xl font-bold mb-2">
-                {t('titleTeam', { venue: qrData.venue.name })}
+              <h1 className="text-xl font-bold mb-1">
+                {t("titleTeam", { venue: qrData.venue.name })}
               </h1>
             </>
           )}
-          <p className="text-muted-foreground">
-            {isPersonalQr ? t('subtitle') : t('subtitleTeam')}
+          <p className="text-sm text-slate-400">
+            {isPersonalQr ? t("subtitle") : t("subtitleTeam")}
           </p>
         </div>
 
-        {/* Staff Selection (for Table/Venue QR with allowStaffChoice) */}
+        {/* Staff Selection */}
         {showStaffChoice && (
-          <Card className="glass p-4 mb-6">
-            <Label className="text-sm font-medium mb-3 block">
-              {t('whoServed')}
-            </Label>
-            <div className="space-y-3">
-              <label className="flex items-center gap-3 p-3 rounded-xl border border-white/10 cursor-pointer hover:bg-white/5 transition-colors">
-                <input
-                  type="radio"
-                  name="tipTarget"
-                  checked={tipTarget === "pool"}
-                  onChange={() => {
-                    setTipTarget("pool");
-                    setSelectedStaffId(null);
-                  }}
-                  className="w-4 h-4 text-primary"
-                />
-                <div>
-                  <div className="font-medium">{t('wholeTeam')}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {t('wholeTeamDesc')}
-                  </div>
-                </div>
-              </label>
-              <label className="flex items-center gap-3 p-3 rounded-xl border border-white/10 cursor-pointer hover:bg-white/5 transition-colors">
-                <input
-                  type="radio"
-                  name="tipTarget"
-                  checked={tipTarget === "staff"}
-                  onChange={() => setTipTarget("staff")}
-                  className="w-4 h-4 text-primary"
-                />
-                <div>
-                  <div className="font-medium">{t('specificStaff')}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {t('specificStaffDesc')}
-                  </div>
-                </div>
-              </label>
-              {tipTarget === "staff" && (
-                <Select
-                  value={selectedStaffId || ""}
-                  onValueChange={setSelectedStaffId}
-                >
-                  <SelectTrigger className="w-full bg-white/5 border-white/10">
-                    <SelectValue placeholder={t('selectStaff')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {qrData.availableStaff.map((staff) => (
-                      <SelectItem key={staff.id} value={staff.id}>
-                        {staff.displayName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+          <div className="mb-5">
+            <p className="text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">
+              {t("whoServed")}
+            </p>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <button
+                onClick={() => {
+                  setTipTarget("pool");
+                  setSelectedStaffId(null);
+                }}
+                className={`p-3 rounded-xl border text-left transition-all ${
+                  tipTarget === "pool"
+                    ? "border-cyan-500 bg-cyan-500/10"
+                    : "border-white/10 bg-white/5"
+                }`}
+              >
+                <Users className="w-5 h-5 mb-1 text-cyan-400" />
+                <div className="font-medium text-sm">{t("wholeTeam")}</div>
+              </button>
+              <button
+                onClick={() => setTipTarget("staff")}
+                className={`p-3 rounded-xl border text-left transition-all ${
+                  tipTarget === "staff"
+                    ? "border-cyan-500 bg-cyan-500/10"
+                    : "border-white/10 bg-white/5"
+                }`}
+              >
+                <User className="w-5 h-5 mb-1 text-cyan-400" />
+                <div className="font-medium text-sm">{t("specificStaff")}</div>
+              </button>
             </div>
-          </Card>
+            {tipTarget === "staff" && (
+              <Select
+                value={selectedStaffId || ""}
+                onValueChange={setSelectedStaffId}
+              >
+                <SelectTrigger className="w-full bg-white/5 border-white/10 h-11">
+                  <SelectValue placeholder={t("selectStaff")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {qrData.availableStaff.map((staff) => (
+                    <SelectItem key={staff.id} value={staff.id}>
+                      {staff.displayName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
         )}
 
         {/* Amount Selection */}
-        <div className="mb-6">
-          <Label className="text-sm font-medium mb-3 block">
-            {t('selectAmount')}
-          </Label>
-          <div className="grid grid-cols-4 gap-2 mb-4">
+        <div className="mb-5">
+          <p className="text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">
+            {t("selectAmount")}
+          </p>
+          <div className="grid grid-cols-4 gap-2 mb-3">
             {AMOUNT_PRESETS.map((amount) => (
               <button
                 key={amount}
@@ -318,10 +308,10 @@ export default function TipPage() {
                   setSelectedAmount(amount);
                   setCustomAmount("");
                 }}
-                className={`h-14 rounded-xl border text-lg font-semibold transition-all ${
+                className={`h-12 rounded-xl border font-bold transition-all ${
                   selectedAmount === amount
-                    ? "border-primary bg-primary/20 text-primary"
-                    : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/50"
+                    ? "border-cyan-500 bg-cyan-500/20 text-cyan-400"
+                    : "border-white/10 bg-white/5 text-white hover:border-cyan-500/50"
                 }`}
               >
                 {formatShortAmount(amount)}
@@ -330,105 +320,90 @@ export default function TipPage() {
           </div>
           <Input
             type="number"
-            placeholder={t('otherAmount')}
+            placeholder={t("otherAmount")}
             value={customAmount}
             onChange={(e) => {
               setCustomAmount(e.target.value);
               setSelectedAmount(null);
             }}
-            className="bg-white/5 border-white/10 h-12"
+            className="bg-white/5 border-white/10 h-11 text-white placeholder:text-slate-500"
           />
-          <p className="text-xs text-muted-foreground mt-2">
-            {t('amountHint')}
-          </p>
         </div>
 
-        {/* Cover Fee Option */}
+        {/* Cover Fee */}
         {finalAmount > 0 && (
-          <Card className="glass p-4 mb-6">
-            <label className="flex items-start gap-3 cursor-pointer">
-              <Checkbox
-                checked={coverFee}
-                onCheckedChange={(checked) => setCoverFee(checked as boolean)}
-                className="mt-0.5"
-              />
-              <div>
-                <div className="font-medium">{t('coverFee')}</div>
-                <div className="text-sm text-muted-foreground">
-                  {t('coverFeeDesc', { 
-                    amount: formatCurrency(platformFee), 
-                    name: targetStaff?.displayName || 'staff' 
-                  })}
-                </div>
+          <label className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer mb-5">
+            <Checkbox
+              checked={coverFee}
+              onCheckedChange={(checked) => setCoverFee(checked as boolean)}
+            />
+            <div className="flex-1">
+              <div className="text-sm font-medium">{t("coverFee")}</div>
+              <div className="text-xs text-slate-400">
+                +{formatCurrency(platformFee)} →{" "}
+                {targetStaff?.displayName || "team"} gets 100%
               </div>
-            </label>
-          </Card>
+            </div>
+          </label>
         )}
 
         {/* Summary */}
         {finalAmount > 0 && (
-          <Card className="glass p-4 mb-6">
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Tip amount</span>
-                <span>{formatCurrency(finalAmount)}</span>
-              </div>
-              {coverFee && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Platform fee</span>
-                  <span>{formatCurrency(platformFee)}</span>
-                </div>
-              )}
-              <div className="flex justify-between font-semibold pt-2 border-t border-white/10">
-                <span>Total</span>
-                <span className="text-primary">{formatCurrency(totalAmount)}</span>
-              </div>
-              {targetStaff && (
-                <div className="flex justify-between pt-2 border-t border-white/10">
-                  <span className="text-muted-foreground">To</span>
-                  <span>{targetStaff.displayName}</span>
-                </div>
-              )}
-              {tipTarget === "pool" && !isPersonalQr && (
-                <div className="flex justify-between pt-2 border-t border-white/10">
-                  <span className="text-muted-foreground">To</span>
-                  <span>The Team</span>
-                </div>
-              )}
+          <div className="rounded-xl bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 p-4">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-slate-400 text-sm">Tip</span>
+              <span className="font-medium">{formatCurrency(finalAmount)}</span>
             </div>
-          </Card>
+            {coverFee && (
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-slate-400 text-sm">Fee covered</span>
+                <span className="font-medium text-cyan-400">
+                  +{formatCurrency(platformFee)}
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between items-center pt-2 border-t border-white/10">
+              <span className="font-semibold">Total</span>
+              <span className="text-xl font-bold text-cyan-400">
+                {formatCurrency(totalAmount)}
+              </span>
+            </div>
+            <div className="text-xs text-slate-400 mt-2 text-center">
+              → {targetStaff?.displayName || "The Team"}
+            </div>
+          </div>
         )}
       </main>
 
       {/* Fixed Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 glass-heavy safe-area-bottom">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-slate-900/95 backdrop-blur border-t border-white/5">
         <Button
           onClick={handleSubmit}
-          disabled={!finalAmount || finalAmount < 1000 || submitting || (tipTarget === "staff" && !selectedStaffId && showStaffChoice)}
-          className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 disabled:opacity-50"
+          disabled={
+            !finalAmount ||
+            finalAmount < 1000 ||
+            submitting ||
+            (tipTarget === "staff" && !selectedStaffId && showStaffChoice)
+          }
+          className="w-full h-12 text-base font-bold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 rounded-xl"
         >
           {submitting ? (
-            <Loader2 className="h-5 w-5 animate-spin mr-2" />
+            <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
             <>
-              {t('sendTip')}
-              <ChevronRight className="ml-2 h-5 w-5" />
+              {t("sendTip")} {finalAmount > 0 && `• ${formatCurrency(totalAmount)}`}
+              <ChevronRight className="ml-1 h-5 w-5" />
             </>
           )}
         </Button>
-        <p className="text-xs text-center text-muted-foreground mt-2">
-          {t('securePayment')}
-        </p>
-        <p className="text-xs text-center text-muted-foreground/50 mt-1">
-          {t('poweredBy')}
+        <p className="text-[10px] text-center text-slate-500 mt-2">
+          {t("securePayment")}
         </p>
       </div>
-
     </div>
   );
 }
 
-// Declare snap for TypeScript
 declare global {
   interface Window {
     snap?: {

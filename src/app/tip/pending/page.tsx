@@ -2,12 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import { AuroraBackground } from "@/components/layout/aurora-background";
-import { Loader2 } from "lucide-react";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { Loader2, Clock } from "lucide-react";
 
-const POLL_INTERVAL = 3000; // 3 seconds
-const MAX_POLLS = 60; // 3 minutes max
+const POLL_INTERVAL = 3000;
+const MAX_POLLS = 60;
 
 export default function TipPendingPage() {
   const searchParams = useSearchParams();
@@ -28,7 +27,6 @@ export default function TipPendingPage() {
 
       const data = await res.json();
 
-      // Redirect based on status
       if (data.status === "success" || data.status === "PAID") {
         router.replace(`/tip/success?order_id=${orderId}`);
         return;
@@ -44,7 +42,6 @@ export default function TipPendingPage() {
         return;
       }
 
-      // Still pending, continue polling
       setPollCount((prev) => prev + 1);
     } catch (err) {
       console.error("Status check error:", err);
@@ -58,10 +55,8 @@ export default function TipPendingPage() {
       return;
     }
 
-    // Initial check
     checkStatus();
 
-    // Set up polling
     const interval = setInterval(() => {
       if (pollCount >= MAX_POLLS) {
         clearInterval(interval);
@@ -75,37 +70,41 @@ export default function TipPendingPage() {
   }, [orderId, pollCount, checkStatus]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <AuroraBackground />
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col">
+      {/* Header */}
+      <header className="px-4 py-3 flex justify-end">
+        <LanguageSwitcher />
+      </header>
 
-      <Card className="glass p-8 text-center max-w-sm w-full">
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
         {error ? (
           <>
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-yellow-500/20 flex items-center justify-center">
-              <span className="text-4xl">⏳</span>
+            <div className="w-24 h-24 mb-6 rounded-full bg-gradient-to-br from-yellow-500/30 to-orange-500/30 flex items-center justify-center ring-4 ring-yellow-500/20">
+              <Clock className="w-14 h-14 text-yellow-400" />
             </div>
-            <h1 className="text-2xl font-bold mb-2">Payment Pending</h1>
-            <p className="text-muted-foreground mb-4">{error}</p>
-            <p className="text-sm text-muted-foreground">
+            <h1 className="text-2xl font-bold mb-2 text-center">Payment Pending</h1>
+            <p className="text-slate-400 text-center mb-4 max-w-xs">{error}</p>
+            <p className="text-sm text-slate-500 text-center max-w-xs">
               If you completed the payment, it may take a few minutes to process.
               You can close this page.
             </p>
           </>
         ) : (
           <>
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/20 flex items-center justify-center">
-              <Loader2 className="w-12 h-12 text-primary animate-spin" />
+            <div className="w-24 h-24 mb-6 rounded-full bg-gradient-to-br from-cyan-500/30 to-blue-500/30 flex items-center justify-center ring-4 ring-cyan-500/20">
+              <Loader2 className="w-14 h-14 text-cyan-400 animate-spin" />
             </div>
-            <h1 className="text-2xl font-bold mb-2">Processing Payment</h1>
-            <p className="text-muted-foreground mb-4">
+            <h1 className="text-2xl font-bold mb-2 text-center">Processing Payment</h1>
+            <p className="text-slate-400 text-center mb-6 max-w-xs">
               Please complete the payment in your payment app. We&apos;re waiting
               for confirmation...
             </p>
-            <div className="flex justify-center gap-1">
+            <div className="flex justify-center gap-2">
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className="w-2 h-2 rounded-full bg-primary animate-pulse"
+                  className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"
                   style={{ animationDelay: `${i * 0.2}s` }}
                 />
               ))}
@@ -114,11 +113,14 @@ export default function TipPendingPage() {
         )}
 
         {orderId && (
-          <p className="text-xs text-muted-foreground mt-6">
-            Reference: {orderId}
-          </p>
+          <p className="text-xs text-slate-600 mt-8">Reference: {orderId}</p>
         )}
-      </Card>
+      </main>
+
+      {/* Footer */}
+      <footer className="p-4 text-center">
+        <p className="text-[10px] text-slate-600">Powered by Tipsio</p>
+      </footer>
     </div>
   );
 }

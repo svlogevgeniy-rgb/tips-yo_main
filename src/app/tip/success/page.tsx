@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AuroraBackground } from "@/components/layout/aurora-background";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { useTranslations } from "@/i18n/client";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, Heart } from "lucide-react";
 
 interface TipDetails {
   amount: number;
@@ -27,8 +25,8 @@ function formatCurrency(amount: number): string {
 export default function TipSuccessPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("order_id");
-  const t = useTranslations('guest.success');
-  
+  const t = useTranslations("guest.success");
+
   const [loading, setLoading] = useState(true);
   const [tipDetails, setTipDetails] = useState<TipDetails | null>(null);
 
@@ -56,61 +54,73 @@ export default function TipSuccessPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <AuroraBackground />
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <AuroraBackground />
-      
-      {/* Language Switcher */}
-      <div className="fixed top-4 right-4 z-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col">
+      {/* Header */}
+      <header className="px-4 py-3 flex justify-end">
         <LanguageSwitcher />
-      </div>
-      
-      <Card className="glass p-8 text-center max-w-sm w-full">
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
         {/* Success Animation */}
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/20 flex items-center justify-center">
-          <CheckCircle2 className="w-12 h-12 text-green-500" />
+        <div className="relative mb-6">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-500/30 to-emerald-500/30 flex items-center justify-center ring-4 ring-green-500/20">
+            <CheckCircle2 className="w-14 h-14 text-green-400" />
+          </div>
+          <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center">
+            <Heart className="w-4 h-4 text-white fill-white" />
+          </div>
         </div>
 
         {/* Content */}
-        <h1 className="text-2xl font-bold mb-2">{t('title')}</h1>
-        <p className="text-muted-foreground mb-6">
-          {t('subtitle')}
+        <h1 className="text-2xl font-bold mb-2 text-center">{t("title")}</h1>
+        <p className="text-slate-400 text-center mb-6 max-w-xs">
+          {t("subtitle")}
         </p>
 
-        {/* Details */}
+        {/* Details Card */}
         {tipDetails && (
-          <div className="bg-white/5 rounded-xl p-4 mb-6 text-left space-y-2">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">{t('amount')}</span>
-              <span className="font-semibold">{formatCurrency(tipDetails.amount)}</span>
+          <div className="w-full max-w-xs rounded-xl bg-white/5 border border-white/10 p-4 mb-6">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-slate-400 text-sm">{t("amount")}</span>
+              <span className="text-xl font-bold text-cyan-400">
+                {formatCurrency(tipDetails.amount)}
+              </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">{t('to')}</span>
-              <span>{tipDetails.staffName || t('theTeam')}</span>
+            <div className="flex justify-between items-center pt-3 border-t border-white/10">
+              <span className="text-slate-400 text-sm">{t("to")}</span>
+              <span className="font-medium">
+                {tipDetails.staffName || t("theTeam")}
+              </span>
             </div>
           </div>
         )}
 
-        <p className="text-sm text-muted-foreground mb-6">
-          {t('message')}
+        <p className="text-sm text-slate-500 text-center max-w-xs mb-8">
+          {t("message")}
         </p>
 
         {/* Close Button */}
         <Button
           variant="outline"
-          className="w-full"
+          className="w-full max-w-xs border-white/10 bg-white/5 hover:bg-white/10"
           onClick={() => window.close()}
         >
-          {t('close')}
+          {t("close")}
         </Button>
-      </Card>
+      </main>
+
+      {/* Footer */}
+      <footer className="p-4 text-center">
+        <p className="text-[10px] text-slate-600">Powered by Tipsio</p>
+      </footer>
     </div>
   );
 }
