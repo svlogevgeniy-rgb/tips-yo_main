@@ -312,9 +312,23 @@ export default function RegisterPage() {
           {step === 2 && (
             <form onSubmit={form2.handleSubmit(handleStep2Submit)} className="space-y-4">
               <div className="space-y-2">
+                <Label htmlFor="merchantId">{t('merchantId')}</Label>
+                <Input
+                  id="merchantId"
+                  placeholder="G123456789"
+                  {...form2.register("merchantId")}
+                  className="h-12"
+                />
+                {form2.formState.errors.merchantId && (
+                  <p className="text-sm text-destructive">{form2.formState.errors.merchantId.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="clientKey">{t('clientKey')}</Label>
                 <Input
                   id="clientKey"
+                  type="password"
                   placeholder="SB-Mid-client-..."
                   {...form2.register("clientKey")}
                   className="h-12"
@@ -335,19 +349,6 @@ export default function RegisterPage() {
                 />
                 {form2.formState.errors.serverKey && (
                   <p className="text-sm text-destructive">{form2.formState.errors.serverKey.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="merchantId">{t('merchantId')}</Label>
-                <Input
-                  id="merchantId"
-                  placeholder="G123456789"
-                  {...form2.register("merchantId")}
-                  className="h-12"
-                />
-                {form2.formState.errors.merchantId && (
-                  <p className="text-sm text-destructive">{form2.formState.errors.merchantId.message}</p>
                 )}
               </div>
 
