@@ -36,6 +36,7 @@ interface CreateTransactionParams {
     error?: string;
     pending?: string;
   };
+  enabledPayments?: string[];
 }
 
 interface SnapResponse {
@@ -78,11 +79,31 @@ export async function createSnapTransaction(
 
   const authString = Buffer.from(`${credentials.serverKey}:`).toString("base64");
 
+  // Default payment methods including Google Pay
+  const defaultPayments = [
+    "credit_card",
+    "google_pay",
+    "gopay",
+    "shopeepay",
+    "qris",
+    "bca_va",
+    "bni_va",
+    "bri_va",
+    "permata_va",
+    "other_va",
+    "indomaret",
+    "alfamart",
+  ];
+
   const payload = {
     transaction_details: {
       order_id: params.orderId,
       gross_amount: params.amount,
     },
+    credit_card: {
+      secure: true, // Enable 3D Secure for credit card and Google Pay
+    },
+    enabled_payments: params.enabledPayments || defaultPayments,
     customer_details: params.customerDetails,
     item_details: params.itemDetails || [
       {
