@@ -10,9 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Loader2, CheckCircle2, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { useTranslations } from "@/i18n/client";
 
 type DistributionMode = "PERSONAL" | "POOLED";
 
@@ -36,6 +36,7 @@ export default function VenueSettingsPage() {
   const [isTesting, setIsTesting] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations('venue.settings');
 
   useEffect(() => {
     async function fetchSettings() {
@@ -146,9 +147,9 @@ export default function VenueSettingsPage() {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-heading font-bold">Settings</h1>
+        <h1 className="text-2xl font-heading font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Configure your venue and payment settings
+          {t('subtitle')}
         </p>
       </div>
 
@@ -165,16 +166,16 @@ export default function VenueSettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="font-heading">
-                Payment Integration (Midtrans)
+                {t('midtrans.title')}
               </CardTitle>
               <CardDescription>
-                Connect your Midtrans account to receive payments
+                {t('midtrans.subtitle')}
               </CardDescription>
             </div>
             {midtransConnected && (
               <span className="flex items-center gap-1 text-sm text-green-400">
                 <CheckCircle2 className="h-4 w-4" />
-                Connected
+                {t('midtrans.connected')}
               </span>
             )}
           </div>
@@ -183,23 +184,21 @@ export default function VenueSettingsPage() {
           {midtransConnected ? (
             <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
               <p className="text-sm text-green-400">
-                ✓ Midtrans is connected
+                ✓ {t('midtrans.isConnected')}
                 {midtransMerchantId && ` (Merchant ID: ${midtransMerchantId})`}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Your venue can now accept digital tips via GoPay, OVO, cards,
-                and QRIS.
+                {t('midtrans.canAccept')}
               </p>
             </div>
           ) : (
             <>
               <div className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20">
                 <p className="text-sm text-yellow-400 font-medium">
-                  ⚠️ Midtrans not connected
+                  ⚠️ {t('midtrans.notConnected')}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  You need to connect Midtrans to start receiving tips. Get your
-                  API keys from{" "}
+                  {t('midtrans.needToConnect')}{" "}
                   <a
                     href="https://dashboard.midtrans.com"
                     target="_blank"
@@ -213,7 +212,7 @@ export default function VenueSettingsPage() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="merchantId">Merchant ID</Label>
+                  <Label htmlFor="merchantId">{t('midtrans.merchantId')}</Label>
                   <Input
                     id="merchantId"
                     placeholder="G123456789"
@@ -224,7 +223,7 @@ export default function VenueSettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="serverKey">Server Key</Label>
+                  <Label htmlFor="serverKey">{t('midtrans.serverKey')}</Label>
                   <div className="relative">
                     <Input
                       id="serverKey"
@@ -249,7 +248,7 @@ export default function VenueSettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="clientKey">Client Key</Label>
+                  <Label htmlFor="clientKey">{t('midtrans.clientKey')}</Label>
                   <Input
                     id="clientKey"
                     placeholder="SB-Mid-client-..."
@@ -269,10 +268,10 @@ export default function VenueSettingsPage() {
                   {isTesting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      Testing connection...
+                      {t('midtrans.testing')}
                     </>
                   ) : (
-                    "Connect Midtrans"
+                    t('midtrans.connect')
                   )}
                 </Button>
               </div>
@@ -285,9 +284,9 @@ export default function VenueSettingsPage() {
       {/* Tip Distribution */}
       <Card className="glass">
         <CardHeader>
-          <CardTitle className="font-heading">Tip Distribution Model</CardTitle>
+          <CardTitle className="font-heading">{t('distribution.title')}</CardTitle>
           <CardDescription>
-            Choose how tips from table/venue QR codes are distributed
+            {t('distribution.subtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -304,10 +303,10 @@ export default function VenueSettingsPage() {
               <span className="text-2xl">👤</span>
               <div>
                 <div className="font-heading font-semibold">
-                  Personal Tipping
+                  {t('distribution.personal')}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Each staff member keeps tips from their personal QR codes.
+                  {t('distribution.personalDesc')}
                 </div>
               </div>
             </div>
@@ -326,10 +325,10 @@ export default function VenueSettingsPage() {
               <span className="text-2xl">👥</span>
               <div>
                 <div className="font-heading font-semibold">
-                  Pooled Tipping (Shared)
+                  {t('distribution.pooled')}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  All tips go into a shared pool and are split equally.
+                  {t('distribution.pooledDesc')}
                 </div>
               </div>
             </div>
@@ -345,12 +344,12 @@ export default function VenueSettingsPage() {
         {isLoading ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            Saving...
+            {t('saving')}
           </>
         ) : saved ? (
-          "✓ Saved!"
+          `✓ ${t('saved')}`
         ) : (
-          "Save Settings"
+          t('saveSettings')
         )}
       </Button>
     </div>

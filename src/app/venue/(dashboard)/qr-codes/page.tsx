@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Loader2, Download, ExternalLink, FileImage, FileText } from "lucide-react";
 import { QR_MATERIALS, getBackgroundStyles, QrMaterial } from "@/lib/qr-materials";
+import { useTranslations } from "@/i18n/client";
 
 type QrCode = {
   id: string;
@@ -26,6 +27,7 @@ export default function QrCodesPage() {
   const [error, setError] = useState<string | null>(null);
   const [downloadingMaterial, setDownloadingMaterial] = useState<string | null>(null);
   const [venueName, setVenueName] = useState<string>("");
+  const t = useTranslations('venue.qr');
 
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -52,7 +54,7 @@ export default function QrCodesPage() {
         }
       } catch (err) {
         console.error("Failed to load data:", err);
-        setError("Не удалось загрузить QR-код");
+        setError(t('failedToLoad'));
       } finally {
         setIsPageLoading(false);
       }
@@ -75,7 +77,7 @@ export default function QrCodesPage() {
       document.body.removeChild(a);
     } catch (err) {
       console.error("Download failed:", err);
-      setError("Не удалось скачать QR-код");
+      setError(t('failedToDownload'));
     }
   };
 
@@ -97,7 +99,7 @@ export default function QrCodesPage() {
       document.body.removeChild(a);
     } catch (err) {
       console.error("Download material failed:", err);
-      setError("Не удалось скачать материал");
+      setError(t('failedToDownloadMaterial'));
     } finally {
       setDownloadingMaterial(null);
     }
@@ -175,9 +177,9 @@ export default function QrCodesPage() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-heading font-bold">QR-код заведения</h1>
+        <h1 className="text-2xl font-heading font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Скачайте и разместите QR-код для приёма чаевых
+          {t('subtitle')}
         </p>
       </div>
 
@@ -191,9 +193,9 @@ export default function QrCodesPage() {
       {venueQr ? (
         <Card className="glass">
           <CardHeader>
-            <CardTitle className="font-heading">Ваш QR-код</CardTitle>
+            <CardTitle className="font-heading">{t('yourQr')}</CardTitle>
             <CardDescription>
-              Гости сканируют этот код, чтобы оставить чаевые
+              {t('yourQrDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -206,7 +208,7 @@ export default function QrCodesPage() {
                 />
               </div>
               <div className="flex-1 text-center sm:text-left">
-                <div className="text-lg font-medium mb-2">{venueName || "QR заведения"}</div>
+                <div className="text-lg font-medium mb-2">{venueName || t('venueQr')}</div>
                 <div className="text-sm text-muted-foreground mb-4 break-all">
                   {baseUrl}/tip/{venueQr.shortCode}
                 </div>
@@ -217,7 +219,7 @@ export default function QrCodesPage() {
                     onClick={() => window.open(`${baseUrl}/tip/${venueQr.shortCode}`, "_blank")}
                   >
                     <ExternalLink className="h-4 w-4 mr-1" />
-                    Открыть
+                    {t('open')}
                   </Button>
                   <Button 
                     variant="outline" 
@@ -244,7 +246,7 @@ export default function QrCodesPage() {
         <Card className="glass">
           <CardContent className="py-8 text-center">
             <p className="text-muted-foreground">
-              QR-код будет создан автоматически после завершения настройки заведения
+              {t('qrWillBeCreated')}
             </p>
           </CardContent>
         </Card>
@@ -254,14 +256,14 @@ export default function QrCodesPage() {
       {venueQr && (
         <Card className="glass">
           <CardHeader>
-            <CardTitle className="font-heading">Материалы для печати</CardTitle>
+            <CardTitle className="font-heading">{t('printMaterials')}</CardTitle>
             <CardDescription>
-              Готовые дизайны для размещения на столах, стойке или у входа
+              {t('printMaterialsDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <h4 className="text-sm font-medium mb-3 text-muted-foreground">Горизонтальные</h4>
+              <h4 className="text-sm font-medium mb-3 text-muted-foreground">{t('horizontal')}</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {QR_MATERIALS.filter(m => m.orientation === "horizontal").map((material) => (
                   <MaterialPreview key={material.id} material={material} />
@@ -269,7 +271,7 @@ export default function QrCodesPage() {
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-medium mb-3 text-muted-foreground">Вертикальные</h4>
+              <h4 className="text-sm font-medium mb-3 text-muted-foreground">{t('vertical')}</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {QR_MATERIALS.filter(m => m.orientation === "vertical").map((material) => (
                   <MaterialPreview key={material.id} material={material} />

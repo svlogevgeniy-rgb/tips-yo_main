@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslations } from "@/i18n/client";
 
 const staffSchema = z.object({
   displayName: z.string().min(1, "Display name is required"),
@@ -82,17 +83,6 @@ function StaffAvatar({ staff }: { staff: Staff }) {
   );
 }
 
-const roleLabels: Record<string, string> = {
-  WAITER: "Официант",
-  BARTENDER: "Бармен",
-  BARISTA: "Бариста",
-  HOSTESS: "Хостес",
-  CHEF: "Повар",
-  ADMINISTRATOR: "Администратор",
-  OTHER: "Другое",
-};
-
-
 export default function StaffManagementPage() {
   const [staff, setStaff] = useState<Staff[]>([]);
   const [venueId, setVenueId] = useState<string | null>(null);
@@ -100,6 +90,17 @@ export default function StaffManagementPage() {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations('venue.staff');
+
+  const roleLabels: Record<string, string> = {
+    WAITER: t('roles.waiter'),
+    BARTENDER: t('roles.bartender'),
+    BARISTA: t('roles.barista'),
+    HOSTESS: t('roles.hostess'),
+    CHEF: t('roles.chef'),
+    ADMINISTRATOR: t('roles.administrator'),
+    OTHER: t('roles.other'),
+  };
 
   const form = useForm<StaffForm>({
     resolver: zodResolver(staffSchema),
@@ -188,7 +189,7 @@ export default function StaffManagementPage() {
   };
 
   const handleDeleteStaff = async (staffMember: Staff) => {
-    if (!confirm(`Удалить сотрудника ${staffMember.displayName}?`)) return;
+    if (!confirm(t('deleteConfirm', { name: staffMember.displayName }))) return;
     
     try {
       const response = await fetch(`/api/staff/${staffMember.id}`, {
@@ -215,26 +216,25 @@ export default function StaffManagementPage() {
     <div className="p-4 md:p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-heading font-bold">Staff Management</h1>
+          <h1 className="text-2xl font-heading font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Add and manage your team members
+            {t('subtitle')}
           </p>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-gradient-to-r from-cyan-500 to-blue-600">
-              + Add Staff
+              {t('addStaff')}
             </Button>
           </DialogTrigger>
           <DialogContent className="glass-heavy">
             <DialogHeader>
               <DialogTitle className="font-heading">
-                Add Staff Member
+                {t('addStaffMember')}
               </DialogTitle>
               <DialogDescription>
-                Add a new team member. A personal QR code will be generated
-                automatically.
+                {t('addStaffDesc')}
               </DialogDescription>
             </DialogHeader>
 
@@ -249,27 +249,27 @@ export default function StaffManagementPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="displayName">Display Name *</Label>
+                <Label htmlFor="displayName">{t('displayName')} *</Label>
                 <Input
                   id="displayName"
-                  placeholder="Name shown to guests"
+                  placeholder={t('displayNamePlaceholder')}
                   {...form.register("displayName")}
                   className="h-12"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">{t('fullName')}</Label>
                 <Input
                   id="fullName"
-                  placeholder="For internal records"
+                  placeholder={t('fullNamePlaceholder')}
                   {...form.register("fullName")}
                   className="h-12"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role">Роль *</Label>
+                <Label htmlFor="role">{t('role')} *</Label>
                 <Select
                   onValueChange={(value) =>
                     form.setValue("role", value as StaffForm["role"])
@@ -277,30 +277,30 @@ export default function StaffManagementPage() {
                   defaultValue="WAITER"
                 >
                   <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Выберите роль" />
+                    <SelectValue placeholder={t('selectRole')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="WAITER">Официант</SelectItem>
-                    <SelectItem value="BARISTA">Бариста</SelectItem>
-                    <SelectItem value="BARTENDER">Бармен</SelectItem>
-                    <SelectItem value="HOSTESS">Хостес</SelectItem>
-                    <SelectItem value="CHEF">Повар</SelectItem>
-                    <SelectItem value="ADMINISTRATOR">Администратор</SelectItem>
-                    <SelectItem value="OTHER">Другое</SelectItem>
+                    <SelectItem value="WAITER">{t('roles.waiter')}</SelectItem>
+                    <SelectItem value="BARISTA">{t('roles.barista')}</SelectItem>
+                    <SelectItem value="BARTENDER">{t('roles.bartender')}</SelectItem>
+                    <SelectItem value="HOSTESS">{t('roles.hostess')}</SelectItem>
+                    <SelectItem value="CHEF">{t('roles.chef')}</SelectItem>
+                    <SelectItem value="ADMINISTRATOR">{t('roles.administrator')}</SelectItem>
+                    <SelectItem value="OTHER">{t('roles.other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="avatarUrl">Фото (опционально)</Label>
+                <Label htmlFor="avatarUrl">{t('photo')}</Label>
                 <Input
                   id="avatarUrl"
-                  placeholder="URL фото или оставьте пустым"
+                  placeholder={t('photoPlaceholder')}
                   {...form.register("avatarUrl")}
                   className="h-12"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Если не указано, будет показана заглушка-аватар
+                  {t('photoHint')}
                 </p>
               </div>
 
@@ -312,7 +312,7 @@ export default function StaffManagementPage() {
                   className="h-4 w-4"
                 />
                 <Label htmlFor="participatesInPool" className="text-sm">
-                  Participates in tip pool
+                  {t('participatesInPool')}
                 </Label>
               </div>
 
@@ -321,7 +321,7 @@ export default function StaffManagementPage() {
                 disabled={isLoading}
                 className="w-full h-14 text-lg font-heading font-bold bg-gradient-to-r from-cyan-500 to-blue-600"
               >
-                {isLoading ? "Adding..." : "Add Staff Member"}
+                {isLoading ? t('adding') : t('addStaffButton')}
               </Button>
             </form>
           </DialogContent>
@@ -334,17 +334,16 @@ export default function StaffManagementPage() {
           <CardContent className="pt-6 text-center">
             <div className="text-6xl mb-4">👥</div>
             <h3 className="text-xl font-heading font-bold mb-2">
-              No staff members yet
+              {t('noStaffYet')}
             </h3>
             <p className="text-muted-foreground mb-4">
-              Add your first team member to start generating QR codes and
-              receiving tips.
+              {t('noStaffDesc')}
             </p>
             <Button
               onClick={() => setIsDialogOpen(true)}
               className="bg-gradient-to-r from-cyan-500 to-blue-600"
             >
-              + Add First Staff Member
+              {t('addFirstStaff')}
             </Button>
           </CardContent>
         </Card>
@@ -374,14 +373,14 @@ export default function StaffManagementPage() {
                           : "bg-gray-500/20 text-gray-400"
                       }`}
                     >
-                      {member.status === "ACTIVE" ? "Активен" : "Неактивен"}
+                      {member.status === "ACTIVE" ? t('active') : t('inactive')}
                     </span>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleToggleStatus(member)}
                     >
-                      {member.status === "ACTIVE" ? "Деактивировать" : "Активировать"}
+                      {member.status === "ACTIVE" ? t('deactivate') : t('activate')}
                     </Button>
                     <Button
                       variant="outline"
@@ -396,12 +395,12 @@ export default function StaffManagementPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex gap-4 text-sm text-muted-foreground">
-                  {member.participatesInPool && <span>🎱 В пуле</span>}
+                  {member.participatesInPool && <span>🎱 {t('inPool')}</span>}
                   {member._count?.tips !== undefined && (
-                    <span>💰 {member._count.tips} чаевых</span>
+                    <span>💰 {member._count.tips} {t('tipsCount')}</span>
                   )}
                   {member.balance !== undefined && member.balance > 0 && (
-                    <span className="text-primary">💵 Баланс: Rp {member.balance.toLocaleString()}</span>
+                    <span className="text-primary">💵 {t('balance')}: Rp {member.balance.toLocaleString()}</span>
                   )}
                 </div>
               </CardContent>

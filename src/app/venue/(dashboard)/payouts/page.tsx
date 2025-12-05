@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "@/i18n/client";
 import { 
   Loader2, 
   Check,
@@ -63,6 +64,7 @@ export default function VenuePayoutsPage() {
   const [error, setError] = useState<string | null>(null);
   const [payingStaff, setPayingStaff] = useState<string | null>(null);
   const [payingAll, setPayingAll] = useState(false);
+  const t = useTranslations('venue.payouts');
 
   useEffect(() => {
     fetchStaffBalances();
@@ -80,7 +82,7 @@ export default function VenuePayoutsPage() {
       const data = await res.json();
       setStaffList(data.staff || []);
     } catch {
-      setError("Не удалось загрузить данные");
+      setError("Failed to load data");
     } finally {
       setLoading(false);
     }
@@ -100,7 +102,7 @@ export default function VenuePayoutsPage() {
         s.id === staffId ? { ...s, balance: 0 } : s
       ));
     } catch {
-      setError("Не удалось обработать выплату");
+      setError("Failed to process payout");
     } finally {
       setPayingStaff(null);
     }
@@ -118,7 +120,7 @@ export default function VenuePayoutsPage() {
       // Update local state - set all balances to 0
       setStaffList(prev => prev.map(s => ({ ...s, balance: 0 })));
     } catch {
-      setError("Не удалось обработать выплаты");
+      setError("Failed to process payouts");
     } finally {
       setPayingAll(false);
     }
@@ -139,9 +141,9 @@ export default function VenuePayoutsPage() {
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-heading font-bold">Выплаты</h1>
+        <h1 className="text-2xl font-heading font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Отмечайте выплаты сотрудникам
+          {t('subtitle')}
         </p>
       </div>
 
@@ -160,7 +162,7 @@ export default function VenuePayoutsPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <Banknote className="h-4 w-4" />
-              <span className="text-xs">К выплате</span>
+              <span className="text-xs">{t('toPay')}</span>
             </div>
             <div className="text-2xl font-bold text-primary">
               {formatCurrency(totalBalance)}
@@ -172,7 +174,7 @@ export default function VenuePayoutsPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <Users className="h-4 w-4" />
-              <span className="text-xs">Сотрудников с балансом</span>
+              <span className="text-xs">{t('staffWithBalance')}</span>
             </div>
             <div className="text-2xl font-bold">
               {staffWithBalance.length}
@@ -187,10 +189,10 @@ export default function VenuePayoutsPage() {
           <AlertTriangle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
           <div className="text-sm">
             <p className="font-medium text-yellow-500">
-              Tipsio не переводит деньги на счета сотрудников
+              {t('warning')}
             </p>
             <p className="text-muted-foreground mt-1">
-              Сначала выплатите чаевые сотрудникам наличными или переводом, затем отметьте выплату здесь.
+              {t('warningDesc')}
             </p>
           </div>
         </div>
@@ -201,13 +203,13 @@ export default function VenuePayoutsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Накопленные чаевые
+            {t('accumulatedTips')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {staffList.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
-              Нет сотрудников
+              {t('noStaff')}
             </p>
           ) : (
             staffList.map((staff) => (
@@ -220,7 +222,7 @@ export default function VenuePayoutsPage() {
                   <div>
                     <div className="font-medium">{staff.displayName}</div>
                     <div className="text-sm text-muted-foreground">
-                      {staff.role} · {staff.tipsCount} чаевых
+                      {staff.role} · {staff.tipsCount} tips
                     </div>
                   </div>
                 </div>
@@ -241,12 +243,12 @@ export default function VenuePayoutsPage() {
                       {payingStaff === staff.id ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        "Выплачено"
+                        t('paid')
                       )}
                     </Button>
                   ) : (
                     <span className="text-sm text-green-400 flex items-center gap-1">
-                      <Check className="h-4 w-4" /> Выплачено
+                      <Check className="h-4 w-4" /> {t('paid')}
                     </span>
                   )}
                 </div>
@@ -268,7 +270,7 @@ export default function VenuePayoutsPage() {
           ) : (
             <Check className="h-5 w-5 mr-2" />
           )}
-          Выплатить всем ({formatCurrency(totalBalance)})
+          {t('payAll')} ({formatCurrency(totalBalance)})
         </Button>
       )}
     </div>
