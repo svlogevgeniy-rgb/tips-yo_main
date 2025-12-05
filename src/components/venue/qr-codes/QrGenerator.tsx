@@ -1,18 +1,29 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { QrDesignState, MaterialType, MATERIAL_TYPES, DEFAULT_CTA_TEXTS } from '@/lib/qr-materials';
-import { MaterialPreview } from './MaterialPreview';
-import { QrPdfDocument } from './PdfTemplates';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import QRCode from 'qrcode';
-import { Download, Upload, Palette } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  QrDesignState,
+  MaterialType,
+  MATERIAL_TYPES,
+  DEFAULT_CTA_TEXTS,
+} from "@/lib/qr-materials";
+import { MaterialPreview } from "./MaterialPreview";
+import { QrPdfDocument } from "./PdfTemplates";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import QRCode from "qrcode";
+import { Download, Upload, Palette, FileText } from "lucide-react";
 
 interface QrGeneratorProps {
   shortCode: string;
@@ -20,23 +31,23 @@ interface QrGeneratorProps {
 }
 
 const PRESET_COLORS = [
-  { name: 'Classic White', base: '#FFFFFF', accent: '#000000' },
-  { name: 'Midnight Black', base: '#1F2937', accent: '#FFFFFF' },
-  { name: 'Tipsio Green', base: '#059669', accent: '#FFFFFF' },
-  { name: 'Ocean Blue', base: '#0EA5E9', accent: '#FFFFFF' },
-  { name: 'Sunset Orange', base: '#F97316', accent: '#FFFFFF' },
-  { name: 'Berry Red', base: '#DC2626', accent: '#FFFFFF' },
+  { name: "Белый", base: "#FFFFFF", accent: "#000000" },
+  { name: "Тёмный", base: "#1F2937", accent: "#FFFFFF" },
+  { name: "Зелёный", base: "#059669", accent: "#FFFFFF" },
+  { name: "Синий", base: "#0EA5E9", accent: "#FFFFFF" },
+  { name: "Оранжевый", base: "#F97316", accent: "#FFFFFF" },
+  { name: "Красный", base: "#DC2626", accent: "#FFFFFF" },
 ];
 
 export function QrGenerator({ shortCode, venueName }: QrGeneratorProps) {
-  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const [design, setDesign] = useState<QrDesignState>({
-    materialType: 'table-tent',
-    baseColor: '#FFFFFF',
-    accentColor: '#000000',
-    ctaText: 'Оставьте чаевые',
+    materialType: "table-tent",
+    baseColor: "#FFFFFF",
+    accentColor: "#000000",
+    ctaText: "Оставьте чаевые",
     showLogo: false,
-    logoUrl: undefined
+    logoUrl: undefined,
   });
   const [isClient, setIsClient] = useState(false);
 
@@ -44,21 +55,14 @@ export function QrGenerator({ shortCode, venueName }: QrGeneratorProps) {
     setIsClient(true);
     const generateQr = async () => {
       try {
-        // Use the full URL for the QR code
         const url = `${window.location.origin}/tip/${shortCode}`;
         const dataUrl = await QRCode.toDataURL(url, {
           width: 512,
           margin: 1,
           color: {
-            dark: design.accentColor === '#FFFFFF' && design.baseColor !== '#FFFFFF' ? design.baseColor : '#000000', // Optimizing contrast for scanner
-            // Actually, standard QR should usually be dark on light. 
-            // If background is dark, we might need inverted QR or a white box.
-            // For simplicity, let's keep QR standard black on white box in preview, 
-            // or use `color` options if we want to blend it.
-            // Let's stick to standard black QR for high readability for now, 
-            // or match accent if contrast is high enough.
-            light: '#FFFFFF00' // Transparent background
-          }
+            dark: "#000000",
+            light: "#FFFFFF00",
+          },
         });
         setQrDataUrl(dataUrl);
       } catch (err) {
@@ -66,14 +70,18 @@ export function QrGenerator({ shortCode, venueName }: QrGeneratorProps) {
       }
     };
     generateQr();
-  }, [shortCode, design.accentColor, design.baseColor]);
+  }, [shortCode]);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setDesign(prev => ({ ...prev, logoUrl: reader.result as string, showLogo: true }));
+        setDesign((prev) => ({
+          ...prev,
+          logoUrl: reader.result as string,
+          showLogo: true,
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -82,175 +90,187 @@ export function QrGenerator({ shortCode, venueName }: QrGeneratorProps) {
   if (!isClient) return null;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 h-full">
-      {/* LEFT: Mobile-First Preview (Top on mobile) */}
-      <div className="flex-1 lg:sticky lg:top-6 self-start w-full">
-        <div className="bg-slate-100/50 dark:bg-slate-900/50 rounded-xl p-4 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center min-h-[400px]">
-          <div className="w-full max-w-md shadow-2xl rounded-lg overflow-hidden transition-all duration-500 ease-in-out">
-             <MaterialPreview design={design} qrDataUrl={qrDataUrl} venueName={venueName} />
-          </div>
-        </div>
-      </div>
-
-      {/* RIGHT: Controls (Bottom on mobile) */}
-      <div className="w-full lg:w-[400px] space-y-6 pb-20 lg:pb-0">
-        
-        {/* Material Selector */}
-        <div className="space-y-3">
-          <Label className="text-base font-semibold">Выберите формат</Label>
-          <Tabs 
-            value={design.materialType} 
-            onValueChange={(v) => setDesign(d => ({ ...d, materialType: v as MaterialType }))} 
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-4">
-               {MATERIAL_TYPES.map(type => (
-                 <TabsTrigger key={type.id} value={type.id} className="text-xs px-1">
-                   {type.label.ru}
-                 </TabsTrigger>
-               ))}
-            </TabsList>
-          </Tabs>
-          <p className="text-sm text-muted-foreground">
-            {MATERIAL_TYPES.find(t => t.id === design.materialType)?.description.ru}
-          </p>
-        </div>
-
-        {/* Content Controls */}
-        <div className="space-y-4 border-t pt-4">
-          <Label className="text-base font-semibold">Наполнение</Label>
-          
-          <div className="space-y-2">
-            <Label htmlFor="cta">Призыв к действию</Label>
-            <Select 
-              value={design.ctaText} 
-              onValueChange={(v) => setDesign(d => ({ ...d, ctaText: v }))}
-            >
-              <SelectTrigger id="cta">
-                <SelectValue placeholder="Выберите текст" />
-              </SelectTrigger>
-              <SelectContent>
-                {DEFAULT_CTA_TEXTS.map(text => (
-                  <SelectItem key={text} value={text}>{text}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Input 
-              placeholder="Или свой вариант..." 
-              value={design.ctaText}
-              onChange={(e) => setDesign(d => ({ ...d, ctaText: e.target.value }))}
-              className="mt-2"
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Label htmlFor="logo-mode" className="cursor-pointer">Логотип заведения</Label>
-            <Switch 
-              id="logo-mode" 
-              checked={design.showLogo}
-              onCheckedChange={(c) => setDesign(d => ({ ...d, showLogo: c }))}
-            />
-          </div>
-          
-          {design.showLogo && (
-            <div className="flex gap-2 items-center">
-               <Button variant="outline" className="w-full relative overflow-hidden">
-                 <Upload className="w-4 h-4 mr-2" /> 
-                 {design.logoUrl ? 'Изменить лого' : 'Загрузить лого'}
-                 <input 
-                    type="file" 
-                    accept="image/*" 
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    onChange={handleLogoUpload}
-                 />
-               </Button>
+    <div className="space-y-4">
+      {/* Preview Card */}
+      <Card className="glass overflow-hidden">
+        <CardContent className="p-4">
+          <div className="bg-muted/30 rounded-lg p-4 flex items-center justify-center min-h-[280px]">
+            <div className="w-full max-w-[240px] shadow-lg rounded-lg overflow-hidden">
+              <MaterialPreview
+                design={design}
+                qrDataUrl={qrDataUrl}
+                venueName={venueName}
+              />
             </div>
-          )}
-        </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Style Controls */}
-        <div className="space-y-4 border-t pt-4">
-          <Label className="text-base font-semibold flex items-center gap-2">
-            <Palette className="w-4 h-4" /> Дизайн
+      {/* Format Selection */}
+      <Card className="glass">
+        <CardContent className="p-4 space-y-3">
+          <Label className="text-sm font-medium flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            Формат
           </Label>
-          
-          <div className="grid grid-cols-6 gap-2">
+          <div className="grid grid-cols-2 gap-2">
+            {MATERIAL_TYPES.map((type) => (
+              <button
+                key={type.id}
+                onClick={() =>
+                  setDesign((d) => ({
+                    ...d,
+                    materialType: type.id as MaterialType,
+                  }))
+                }
+                className={`p-3 rounded-lg border text-left transition-all ${
+                  design.materialType === type.id
+                    ? "border-primary bg-primary/10"
+                    : "border-border bg-background hover:border-primary/50"
+                }`}
+              >
+                <div className="font-medium text-sm">{type.label.ru}</div>
+                <div className="text-xs text-muted-foreground">
+                  {type.description.ru}
+                </div>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Content Settings */}
+      <Card className="glass">
+        <CardContent className="p-4 space-y-4">
+          <Label className="text-sm font-medium">Текст</Label>
+
+          <Select
+            value={design.ctaText}
+            onValueChange={(v) => setDesign((d) => ({ ...d, ctaText: v }))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Выберите текст" />
+            </SelectTrigger>
+            <SelectContent>
+              {DEFAULT_CTA_TEXTS.map((text) => (
+                <SelectItem key={text} value={text}>
+                  {text}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Input
+            placeholder="Или свой вариант..."
+            value={design.ctaText}
+            onChange={(e) => setDesign((d) => ({ ...d, ctaText: e.target.value }))}
+          />
+
+          <div className="flex items-center justify-between pt-2">
+            <Label htmlFor="logo-switch" className="text-sm cursor-pointer">
+              Логотип
+            </Label>
+            <Switch
+              id="logo-switch"
+              checked={design.showLogo}
+              onCheckedChange={(c) => setDesign((d) => ({ ...d, showLogo: c }))}
+            />
+          </div>
+
+          {design.showLogo && (
+            <Button variant="outline" className="w-full relative overflow-hidden">
+              <Upload className="w-4 h-4 mr-2" />
+              {design.logoUrl ? "Изменить" : "Загрузить"}
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                onChange={handleLogoUpload}
+              />
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Color Settings */}
+      <Card className="glass">
+        <CardContent className="p-4 space-y-4">
+          <Label className="text-sm font-medium flex items-center gap-2">
+            <Palette className="w-4 h-4" />
+            Цвет
+          </Label>
+
+          <div className="flex flex-wrap gap-2">
             {PRESET_COLORS.map((c, i) => (
               <button
                 key={i}
-                className={`w-8 h-8 rounded-full border-2 ${design.baseColor === c.base ? 'border-black dark:border-white ring-2 ring-offset-2' : 'border-transparent'}`}
+                className={`w-10 h-10 rounded-lg border-2 transition-all ${
+                  design.baseColor === c.base
+                    ? "border-primary ring-2 ring-primary/30"
+                    : "border-border"
+                }`}
                 style={{ backgroundColor: c.base }}
-                onClick={() => setDesign(d => ({ ...d, baseColor: c.base, accentColor: c.accent }))}
+                onClick={() =>
+                  setDesign((d) => ({
+                    ...d,
+                    baseColor: c.base,
+                    accentColor: c.accent,
+                  }))
+                }
                 title={c.name}
               />
             ))}
-            <div className="relative">
-               <input 
-                 type="color" 
-                 className="w-8 h-8 rounded-full overflow-hidden p-0 border-0 cursor-pointer opacity-0 absolute inset-0"
-                 value={design.baseColor}
-                 onChange={(e) => setDesign(d => ({ ...d, baseColor: e.target.value }))}
-               />
-               <div className="w-8 h-8 rounded-full border border-gray-300 bg-gradient-to-br from-white to-black pointer-events-none" />
+            <div className="relative w-10 h-10">
+              <input
+                type="color"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                value={design.baseColor}
+                onChange={(e) =>
+                  setDesign((d) => ({ ...d, baseColor: e.target.value }))
+                }
+              />
+              <div className="w-full h-full rounded-lg border-2 border-border bg-gradient-to-br from-red-500 via-green-500 to-blue-500" />
             </div>
           </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-             <div>
-                <Label className="text-xs mb-1 block">Фон</Label>
-                <div className="flex gap-2 items-center">
-                  <div className="w-6 h-6 rounded border" style={{ backgroundColor: design.baseColor }} />
-                  <Input 
-                     value={design.baseColor} 
-                     onChange={(e) => setDesign(d => ({ ...d, baseColor: e.target.value }))} 
-                     className="h-8 font-mono text-xs"
-                  />
-                </div>
-             </div>
-             <div>
-                <Label className="text-xs mb-1 block">Текст</Label>
-                <div className="flex gap-2 items-center">
-                  <div className="w-6 h-6 rounded border" style={{ backgroundColor: design.accentColor }} />
-                  <Input 
-                     value={design.accentColor} 
-                     onChange={(e) => setDesign(d => ({ ...d, accentColor: e.target.value }))} 
-                     className="h-8 font-mono text-xs"
-                  />
-                </div>
-             </div>
-          </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Actions */}
-        <div className="pt-4 sticky bottom-0 bg-background/95 backdrop-blur py-4 border-t mt-auto">
-          {isClient && qrDataUrl && (
-            <PDFDownloadLink
-              document={<QrPdfDocument design={design} qrDataUrl={qrDataUrl} venueName={venueName} />}
-              fileName={`tipsio-${design.materialType}.pdf`}
-              className="w-full"
-            >
-              {({ loading }) => (
-                <Button className="w-full" size="lg" disabled={loading || !qrDataUrl}>
-                  {loading ? (
-                      <>Генерация...</>
-                  ) : (
-                      <>
-                          <Download className="w-4 h-4 mr-2" /> Скачать PDF для печати
-                      </>
-                  )}
-                </Button>
-              )}
-            </PDFDownloadLink>
-          )}
-          {(!isClient || !qrDataUrl) && (
-            <Button className="w-full" size="lg" disabled>
-              <Download className="w-4 h-4 mr-2" /> Загрузка...
-            </Button>
-          )}
-          <p className="text-xs text-center text-muted-foreground mt-2">
-            PDF высокого качества (вектор)
-          </p>
-        </div>
+      {/* Download Button */}
+      <div className="sticky bottom-4 z-10">
+        {isClient && qrDataUrl ? (
+          <PDFDownloadLink
+            document={
+              <QrPdfDocument
+                design={design}
+                qrDataUrl={qrDataUrl}
+                venueName={venueName}
+              />
+            }
+            fileName={`tipsio-${design.materialType}.pdf`}
+            className="block"
+          >
+            {({ loading }) => (
+              <Button
+                className="w-full h-12 text-base font-semibold shadow-lg"
+                size="lg"
+                disabled={loading}
+              >
+                {loading ? (
+                  "Генерация..."
+                ) : (
+                  <>
+                    <Download className="w-5 h-5 mr-2" />
+                    Скачать PDF
+                  </>
+                )}
+              </Button>
+            )}
+          </PDFDownloadLink>
+        ) : (
+          <Button className="w-full h-12" size="lg" disabled>
+            Загрузка...
+          </Button>
+        )}
       </div>
     </div>
   );

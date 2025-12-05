@@ -2,18 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Loader2, Download, ExternalLink } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2, Download, ExternalLink, QrCode } from "lucide-react";
 import { useTranslations } from "@/i18n/client";
 import { QrGenerator } from "@/components/venue/qr-codes/QrGenerator";
 
-type QrCode = {
+type QrCodeType = {
   id: string;
   type: "PERSONAL" | "TABLE" | "VENUE";
   label: string | null;
@@ -22,11 +16,11 @@ type QrCode = {
 };
 
 export default function QrCodesPage() {
-  const [venueQr, setVenueQr] = useState<QrCode | null>(null);
+  const [venueQr, setVenueQr] = useState<QrCodeType | null>(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [venueName, setVenueName] = useState<string>("");
-  const t = useTranslations('venue.qr');
+  const t = useTranslations("venue.qr");
 
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -44,21 +38,22 @@ export default function QrCodesPage() {
           if (qrRes.ok) {
             const qrData = await qrRes.json();
             const codes = qrData.qrCodes || [];
-            // Find venue QR (type VENUE or first TABLE)
-            const venueCode = codes.find((qr: QrCode) => qr.type === "VENUE") 
-              || codes.find((qr: QrCode) => qr.type === "TABLE")
-              || codes[0];
+            const venueCode =
+              codes.find((qr: QrCodeType) => qr.type === "VENUE") ||
+              codes.find((qr: QrCodeType) => qr.type === "TABLE") ||
+              codes[0];
             setVenueQr(venueCode || null);
           }
         }
       } catch (err) {
         console.error("Failed to load data:", err);
-        setError(t('failedToLoad'));
+        setError(t("failedToLoad"));
       } finally {
         setIsPageLoading(false);
       }
     }
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDownload = async (qrId: string, format: "png" | "svg") => {
@@ -76,7 +71,7 @@ export default function QrCodesPage() {
       document.body.removeChild(a);
     } catch (err) {
       console.error("Download failed:", err);
-      setError(t('failedToDownload'));
+      setError(t("failedToDownload"));
     }
   };
 
@@ -89,12 +84,11 @@ export default function QrCodesPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
+    <div className="space-y-6">
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-heading font-bold">{t('title')}</h1>
-        <p className="text-muted-foreground">
-          {t('subtitle')}
-        </p>
+        <h1 className="text-2xl font-heading font-bold">{t("title")}</h1>
+        <p className="text-muted-foreground text-sm">{t("subtitle")}</p>
       </div>
 
       {error && (
@@ -103,82 +97,86 @@ export default function QrCodesPage() {
         </div>
       )}
 
-      {/* Main QR Card - Quick Access */}
+      {/* QR Code Card */}
       {venueQr ? (
         <Card className="glass">
-          <CardHeader>
-            <CardTitle className="font-heading">QR код заведения</CardTitle>
-            <CardDescription>
-              Базовый QR код для сканирования.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row items-center gap-6">
-              <div className="w-32 h-32 bg-white rounded-xl p-3 flex items-center justify-center shadow-sm">
-                <img 
-                  src={`/api/qr/${venueQr.id}/download?format=svg`} 
-                  alt="QR Code" 
+          <CardContent className="p-4">
+            <div className="flex flex-col items-center gap-4">
+              {/* QR Preview */}
+              <div className="w-40 h-40 bg-white rounded-xl p-3 shadow-sm">
+                <img
+                  src={`/api/qr/${venueQr.id}/download?format=svg`}
+                  alt="QR Code"
                   className="w-full h-full"
                 />
               </div>
-              <div className="flex-1 text-center sm:text-left">
-                <div className="text-lg font-medium mb-1">{venueName || t('venueQr')}</div>
-                <div className="text-sm text-muted-foreground mb-4 break-all font-mono">
+
+              {/* Info */}
+              <div className="text-center">
+                <div className="font-medium">{venueName || t("venueQr")}</div>
+                <div className="text-xs text-muted-foreground font-mono mt-1 break-all px-4">
                   {baseUrl}/tip/{venueQr.shortCode}
                 </div>
-                <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => window.open(`${baseUrl}/tip/${venueQr.shortCode}`, "_blank")}
-                  >
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    Проверить ссылку
-                  </Button>
-                  <Button 
-                    variant="secondary" 
-                    size="sm"
-                    onClick={() => handleDownload(venueQr.id, "png")}
-                  >
-                    <Download className="h-4 w-4 mr-1" />
-                    Скачать PNG
-                  </Button>
-                  <Button 
-                    variant="secondary" 
-                    size="sm"
-                    onClick={() => handleDownload(venueQr.id, "svg")}
-                  >
-                    <Download className="h-4 w-4 mr-1" />
-                    Скачать SVG
-                  </Button>
-                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-wrap gap-2 justify-center w-full">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 min-w-[120px]"
+                  onClick={() =>
+                    window.open(`${baseUrl}/tip/${venueQr.shortCode}`, "_blank")
+                  }
+                >
+                  <ExternalLink className="h-4 w-4 mr-1.5" />
+                  Открыть
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="flex-1 min-w-[120px]"
+                  onClick={() => handleDownload(venueQr.id, "png")}
+                >
+                  <Download className="h-4 w-4 mr-1.5" />
+                  PNG
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="flex-1 min-w-[120px]"
+                  onClick={() => handleDownload(venueQr.id, "svg")}
+                >
+                  <Download className="h-4 w-4 mr-1.5" />
+                  SVG
+                </Button>
               </div>
             </div>
           </CardContent>
         </Card>
       ) : (
         <Card className="glass">
-          <CardContent className="py-8 text-center">
-            <p className="text-muted-foreground">
-              {t('qrWillBeCreated')}
-            </p>
+          <CardContent className="py-12 text-center">
+            <QrCode className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+            <p className="text-muted-foreground">{t("qrWillBeCreated")}</p>
           </CardContent>
         </Card>
       )}
 
-      {/* New Generator Section */}
+      {/* Materials Constructor */}
       {venueQr && (
         <div className="space-y-4">
-           <h2 className="text-xl font-heading font-bold">Конструктор материалов</h2>
-           <p className="text-muted-foreground text-sm">
-             Создайте стильные материалы для печати: тейбл-тенты, наклейки и визитки.
-           </p>
-           <Card className="glass border-0 shadow-none bg-transparent">
-             <QrGenerator shortCode={venueQr.shortCode} venueName={venueName} />
-           </Card>
+          <div>
+            <h2 className="text-lg font-heading font-semibold">
+              Конструктор материалов
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Создайте материалы для печати
+            </p>
+          </div>
+          <QrGenerator shortCode={venueQr.shortCode} venueName={venueName} />
         </div>
       )}
     </div>
   );
 }
-

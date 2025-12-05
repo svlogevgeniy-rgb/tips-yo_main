@@ -1,6 +1,5 @@
-import React from 'react';
-import { QrDesignState } from '@/lib/qr-materials';
-import { Scissors } from 'lucide-react';
+import React from "react";
+import { QrDesignState } from "@/lib/qr-materials";
 
 interface MaterialPreviewProps {
   design: QrDesignState;
@@ -8,90 +7,117 @@ interface MaterialPreviewProps {
   venueName: string;
 }
 
-export const MaterialPreview = ({ design, qrDataUrl, venueName }: MaterialPreviewProps) => {
-  const { materialType, baseColor, accentColor, ctaText, showLogo, logoUrl } = design;
+export const MaterialPreview = ({
+  design,
+  qrDataUrl,
+  venueName,
+}: MaterialPreviewProps) => {
+  const { materialType, baseColor, accentColor, ctaText, showLogo, logoUrl } =
+    design;
 
-  // Common styles
   const bgStyle = { backgroundColor: baseColor };
   const textStyle = { color: accentColor };
-  const qrContainerStyle = { backgroundColor: 'white', padding: '0.5rem', borderRadius: '0.5rem' };
 
   const Content = ({ scale = 1 }: { scale?: number }) => (
-    <div className="flex flex-col items-center justify-center text-center p-4 h-full w-full relative">
+    <div
+      className="flex flex-col items-center justify-center text-center p-4 h-full w-full"
+      style={bgStyle}
+    >
       {showLogo && logoUrl && (
-        <img src={logoUrl} alt="Logo" className="w-8 h-8 mb-2 object-contain" />
+        <img
+          src={logoUrl}
+          alt="Logo"
+          className="mb-2 object-contain"
+          style={{ width: 24 * scale, height: 24 * scale }}
+        />
       )}
-      <h3 className="font-bold mb-3 leading-tight" style={{ ...textStyle, fontSize: `${1.2 * scale}rem` }}>
+      <h3
+        className="font-bold mb-2 leading-tight"
+        style={{ ...textStyle, fontSize: `${0.9 * scale}rem` }}
+      >
         {ctaText}
       </h3>
-      
-      <div style={qrContainerStyle} className="shadow-sm">
-        <img src={qrDataUrl} alt="QR Code" className="block" style={{ width: `${120 * scale}px`, height: `${120 * scale}px` }} />
+
+      <div className="bg-white p-2 rounded-md shadow-sm">
+        <img
+          src={qrDataUrl}
+          alt="QR Code"
+          style={{ width: 80 * scale, height: 80 * scale }}
+        />
       </div>
 
-      <p className="mt-3 text-xs opacity-80 font-medium" style={textStyle}>
+      <p
+        className="mt-2 opacity-80 font-medium"
+        style={{ ...textStyle, fontSize: `${0.6 * scale}rem` }}
+      >
         {venueName}
       </p>
     </div>
   );
 
-  // Render Table Tent (Front Face Preview)
-  if (materialType === 'table-tent') {
+  // Table Tent - A4 folded
+  if (materialType === "table-tent") {
     return (
-      <div className="w-full aspect-[210/297] bg-white shadow-lg rounded-lg overflow-hidden relative flex flex-col">
-        {/* Simulation of A4 Sheet */}
-        <div className="absolute inset-0 flex flex-col pointer-events-none">
-             {/* Top Half (Back - Faded/Inverted) */}
-            <div className="h-1/2 border-b-2 border-dashed border-gray-300 flex items-center justify-center opacity-30 bg-gray-50">
-                 <div className="transform rotate-180"><Content scale={0.8} /></div>
+      <div
+        className="w-full aspect-[3/4] rounded-lg overflow-hidden relative"
+        style={bgStyle}
+      >
+        <div className="absolute inset-0 flex flex-col">
+          <div className="h-1/2 border-b border-dashed border-gray-300/50 flex items-center justify-center opacity-30">
+            <div className="transform rotate-180 scale-75">
+              <Content scale={0.8} />
             </div>
-            {/* Bottom Half (Front) */}
-            <div className="h-1/2 flex items-center justify-center" style={bgStyle}>
-                <Content />
-            </div>
+          </div>
+          <div className="h-1/2 flex items-center justify-center">
+            <Content />
+          </div>
         </div>
-        <div className="absolute top-2 right-2 text-[10px] text-gray-400 border border-gray-200 px-1 rounded bg-white">
-            A4 Preview
+        <div className="absolute top-1 right-1 text-[8px] text-gray-400 bg-white/80 px-1 rounded">
+          A4
         </div>
       </div>
     );
   }
 
-  // Render Sticker
-  if (materialType === 'sticker') {
+  // Sticker - Circle
+  if (materialType === "sticker") {
     return (
-      <div className="w-full aspect-square bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden relative">
-         <div className="w-[70%] aspect-square rounded-full shadow-xl flex items-center justify-center relative overflow-hidden" style={bgStyle}>
-            <Content scale={0.9} />
-         </div>
-         <div className="absolute bottom-2 text-xs text-gray-400 flex items-center gap-1">
-            <Scissors size={12} /> Cut along the edge
-         </div>
+      <div className="w-full aspect-square flex items-center justify-center bg-gray-100 rounded-lg">
+        <div
+          className="w-[85%] aspect-square rounded-full shadow-lg overflow-hidden"
+          style={bgStyle}
+        >
+          <Content scale={0.9} />
+        </div>
       </div>
     );
   }
 
-  // Render Card (Simple Rectangle)
-  if (materialType === 'card') {
-      return (
-        <div className="w-full aspect-[1.6] bg-gray-100 flex items-center justify-center rounded-lg relative">
-            <div className="w-[80%] h-[80%] shadow-xl flex items-center justify-center rounded-lg relative overflow-hidden" style={bgStyle}>
-                <Content scale={0.8} />
-            </div>
+  // Card - Business card ratio
+  if (materialType === "card") {
+    return (
+      <div className="w-full aspect-[1.6/1] flex items-center justify-center bg-gray-100 rounded-lg p-3">
+        <div
+          className="w-full h-full shadow-lg rounded-md overflow-hidden"
+          style={bgStyle}
+        >
+          <Content scale={0.7} />
         </div>
-      );
-  }
-  
-  // Poster (A4 Full)
-  if (materialType === 'poster') {
-      return (
-        <div className="w-full aspect-[210/297] shadow-lg rounded-lg overflow-hidden relative flex items-center justify-center" style={bgStyle}>
-             <div className="transform scale-125">
-                 <Content scale={1.5} />
-             </div>
-        </div>
-      );
+      </div>
+    );
   }
 
-  return <div>Unknown Type</div>;
+  // Poster - A4 full
+  if (materialType === "poster") {
+    return (
+      <div
+        className="w-full aspect-[3/4] shadow-lg rounded-lg overflow-hidden"
+        style={bgStyle}
+      >
+        <Content scale={1.2} />
+      </div>
+    );
+  }
+
+  return <div className="p-4 text-center text-muted-foreground">Выберите формат</div>;
 };
