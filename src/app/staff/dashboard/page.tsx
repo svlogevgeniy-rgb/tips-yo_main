@@ -169,7 +169,7 @@ export default function StaffDashboardPage() {
           
           {data.recentPayouts.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No payouts yet
+              {t('noPayoutsYet')}
             </p>
           ) : (
             <div className="space-y-3">
@@ -191,7 +191,7 @@ export default function StaffDashboardPage() {
                       ? "bg-green-500/20 text-green-400" 
                       : "bg-yellow-500/20 text-yellow-400"
                   }`}>
-                    {payout.status === "PAID" ? `${t('paid')} ✅` : "Pending ⏳"}
+                    {payout.status === "PAID" ? `${t('paid')} ✅` : `${t('pending')} ⏳`}
                   </div>
                 </div>
               ))}

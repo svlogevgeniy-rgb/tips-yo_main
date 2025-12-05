@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
-const steps = ["Profile", "Payments", "Distribution", "Done"];
+import { useTranslations } from "@/i18n/client";
 
 const midtransSchema = z.object({
   merchantId: z.string().min(1, "Merchant ID is required"),
@@ -22,10 +21,13 @@ type MidtransForm = z.infer<typeof midtransSchema>;
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const t = useTranslations('venue.onboarding');
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [distributionMode, setDistributionMode] = useState<"PERSONAL" | "POOLED">("PERSONAL");
+  
+  const steps = [t('profile'), t('payments'), t('distribution'), t('done')];
 
   const midtransForm = useForm<MidtransForm>({
     resolver: zodResolver(midtransSchema),
@@ -78,13 +80,13 @@ export default function OnboardingPage() {
         return (
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              Your venue profile has been created. Let&apos;s set up payments next.
+              {t('profileCreated')}
             </p>
             <Button
               onClick={() => setCurrentStep(1)}
               className="w-full h-14 text-lg font-heading font-bold bg-gradient-to-r from-cyan-500 to-blue-600"
             >
-              Continue to Payments
+              {t('continueToPayments')}
             </Button>
           </div>
         );
@@ -93,7 +95,7 @@ export default function OnboardingPage() {
         return (
           <form onSubmit={midtransForm.handleSubmit(handleMidtransSubmit)} className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Tipsio doesn&apos;t hold your money. All tips go directly to your Midtrans merchant account.
+              {t('midtransInfo')}
             </p>
 
             {error && (
@@ -103,7 +105,7 @@ export default function OnboardingPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="merchantId">Merchant ID</Label>
+              <Label htmlFor="merchantId">{t('merchantId')}</Label>
               <Input
                 id="merchantId"
                 placeholder="G123456789"
@@ -113,7 +115,7 @@ export default function OnboardingPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="clientKey">Client Key</Label>
+              <Label htmlFor="clientKey">{t('clientKey')}</Label>
               <Input
                 id="clientKey"
                 placeholder="SB-Mid-client-..."
@@ -123,7 +125,7 @@ export default function OnboardingPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="serverKey">Server Key</Label>
+              <Label htmlFor="serverKey">{t('serverKey')}</Label>
               <Input
                 id="serverKey"
                 type="password"
@@ -139,7 +141,7 @@ export default function OnboardingPage() {
               rel="noopener noreferrer"
               className="text-sm text-primary hover:underline block"
             >
-              Where to find these keys in Midtrans dashboard?
+              {t('findKeys')}
             </a>
 
             <Button
@@ -147,7 +149,7 @@ export default function OnboardingPage() {
               disabled={isLoading}
               className="w-full h-14 text-lg font-heading font-bold bg-gradient-to-r from-cyan-500 to-blue-600"
             >
-              {isLoading ? "Testing connection..." : "Test Connection"}
+              {isLoading ? t('testingConnection') : t('testConnection')}
             </Button>
           </form>
         );
@@ -156,7 +158,7 @@ export default function OnboardingPage() {
         return (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Choose a model that fits your team culture. You can change this later.
+              {t('chooseModel')}
             </p>
 
             <div className="space-y-3">
@@ -169,9 +171,9 @@ export default function OnboardingPage() {
                     : "border-white/10 bg-white/5 hover:bg-white/10"
                 }`}
               >
-                <div className="font-heading font-semibold">Personal tipping</div>
+                <div className="font-heading font-semibold">{t('personalTipping')}</div>
                 <div className="text-sm text-muted-foreground">
-                  Each staff member keeps tips from their personal QR codes.
+                  {t('personalTippingDesc')}
                 </div>
               </button>
 
@@ -184,9 +186,9 @@ export default function OnboardingPage() {
                     : "border-white/10 bg-white/5 hover:bg-white/10"
                 }`}
               >
-                <div className="font-heading font-semibold">Pooled tipping (shared)</div>
+                <div className="font-heading font-semibold">{t('pooledTipping')}</div>
                 <div className="text-sm text-muted-foreground">
-                  All tips go into a shared pool and are split equally among active staff.
+                  {t('pooledTippingDesc')}
                 </div>
               </button>
             </div>
@@ -196,7 +198,7 @@ export default function OnboardingPage() {
               disabled={isLoading}
               className="w-full h-14 text-lg font-heading font-bold bg-gradient-to-r from-cyan-500 to-blue-600"
             >
-              Continue
+              {t('continue')}
             </Button>
           </div>
         );
@@ -205,15 +207,15 @@ export default function OnboardingPage() {
         return (
           <div className="space-y-4 text-center">
             <div className="text-6xl">🎉</div>
-            <h3 className="text-xl font-heading font-bold">You&apos;re ready to receive digital tips!</h3>
+            <h3 className="text-xl font-heading font-bold">{t('readyTitle')}</h3>
             <p className="text-muted-foreground">
-              Once guests start scanning and paying tips, you&apos;ll see all data in your dashboard.
+              {t('readyMessage')}
             </p>
             <Button
               onClick={() => router.push("/venue/dashboard")}
               className="w-full h-14 text-lg font-heading font-bold bg-gradient-to-r from-cyan-500 to-blue-600"
             >
-              Go to Dashboard
+              {t('goToDashboard')}
             </Button>
           </div>
         );
@@ -243,7 +245,7 @@ export default function OnboardingPage() {
             {steps[currentStep]}
           </CardTitle>
           <CardDescription>
-            Step {currentStep + 1} of {steps.length}
+            {t('step')} {currentStep + 1} of {steps.length}
           </CardDescription>
         </CardHeader>
         <CardContent>{renderStep()}</CardContent>

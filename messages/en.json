@@ -140,7 +140,19 @@
       "coverFeeDesc": "Add {amount} so {name} receives the full tip",
       "sendTip": "Send Tip Securely",
       "securePayment": "Secure payment via GoPay, OVO, cards or QRIS — processed by our payment provider. No app required.",
-      "poweredBy": "Powered by Tipsio"
+      "poweredBy": "Powered by Tipsio",
+      "tipLabel": "Tip",
+      "feeCovered": "Fee covered",
+      "totalLabel": "Total",
+      "gets100": "gets 100%"
+    },
+    "pending": {
+      "title": "Processing Payment",
+      "subtitle": "Please complete the payment in your payment app. We're waiting for confirmation...",
+      "pendingTitle": "Payment Pending",
+      "timeoutMessage": "Payment verification timed out. Please check your payment app.",
+      "completedNote": "If you completed the payment, it may take a few minutes to process. You can close this page.",
+      "reference": "Reference"
     },
     "success": {
       "title": "Thank you! 🙌",
@@ -181,19 +193,27 @@
       "total": "total",
       "lastPayouts": "Last payouts",
       "paid": "Paid",
+      "pending": "Pending",
+      "noPayoutsYet": "No payouts yet",
       "seeFullHistory": "See full history"
     },
     "history": {
       "title": "Tip history",
       "subtitle": "See how your tips add up over weeks and payouts.",
+      "back": "Back",
       "lastMonth": "Last month",
       "last3Months": "Last 3 months",
+      "last6Months": "Last 6 months",
       "customDates": "Custom dates",
       "totalTips": "Total tips",
       "payoutStatus": "Payout status",
       "paidOn": "Paid on {date}",
       "pendingPayout": "Pending payout",
-      "details": "Details"
+      "details": "Details",
+      "noHistory": "No tip history yet",
+      "date": "Date",
+      "tips": "Tips",
+      "amount": "Amount"
     }
   },
   "venue": {
@@ -209,7 +229,8 @@
       "email": "Email",
       "password": "Password",
       "login": "Log in",
-      "register": "Register new venue"
+      "register": "Register new venue",
+      "accountCreated": "Account created successfully! Please sign in."
     },
     "register": {
       "title": "Register Your Venue",
@@ -241,6 +262,31 @@
       "creating": "Creating account...",
       "haveAccount": "Already have an account?",
       "signIn": "Sign in"
+    },
+    "onboarding": {
+      "profile": "Profile",
+      "payments": "Payments",
+      "distribution": "Distribution",
+      "done": "Done",
+      "step": "Step",
+      "profileCreated": "Your venue profile has been created. Let's set up payments next.",
+      "continueToPayments": "Continue to Payments",
+      "midtransInfo": "Tipsio doesn't hold your money. All tips go directly to your Midtrans merchant account.",
+      "merchantId": "Merchant ID",
+      "clientKey": "Client Key",
+      "serverKey": "Server Key",
+      "findKeys": "Where to find these keys in Midtrans dashboard?",
+      "testingConnection": "Testing connection...",
+      "testConnection": "Test Connection",
+      "chooseModel": "Choose a model that fits your team culture. You can change this later.",
+      "personalTipping": "Personal tipping",
+      "personalTippingDesc": "Each staff member keeps tips from their personal QR codes.",
+      "pooledTipping": "Pooled tipping (shared)",
+      "pooledTippingDesc": "All tips go into a shared pool and are split equally among active staff.",
+      "continue": "Continue",
+      "readyTitle": "You're ready to receive digital tips!",
+      "readyMessage": "Once guests start scanning and paying tips, you'll see all data in your dashboard.",
+      "goToDashboard": "Go to Dashboard"
     },
     "dashboard": {
       "title": "{venue} dashboard",
@@ -388,7 +434,9 @@
       "manageVenues": "Manage Venues",
       "manageVenuesDesc": "View, edit, and block venues on the platform",
       "transactionLogs": "Transaction Logs",
-      "transactionLogsDesc": "Monitor transactions and debug payment issues"
+      "transactionLogsDesc": "Monitor transactions and debug payment issues",
+      "platformCommissions": "Platform Commissions",
+      "platformCommissionsDesc": "Revenue report and billing by venue (5% fee)"
     },
     "venues": {
       "title": "Venues",
@@ -406,7 +454,10 @@
       "actions": "Actions",
       "viewDetails": "View details",
       "block": "Block",
-      "unblock": "Unblock"
+      "unblock": "Unblock",
+      "liveStatus": "Live",
+      "testStatus": "Test",
+      "notConnected": "Not connected"
     },
     "transactions": {
       "title": "Transaction Logs",
@@ -430,7 +481,12 @@
       "staff": "Staff",
       "pool": "Pool",
       "paymentMethod": "Payment Method",
-      "errorMessage": "Error Message"
+      "errorMessage": "Error Message",
+      "capture": "capture",
+      "deny": "deny",
+      "cancel": "cancel",
+      "expire": "expire",
+      "recorded": "recorded"
     }
   }
 }

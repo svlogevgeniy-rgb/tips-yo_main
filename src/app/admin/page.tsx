@@ -4,8 +4,10 @@ import { motion } from 'framer-motion'
 import { Building2, FileText, TrendingUp, Users, DollarSign, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import { AuroraBackground } from '@/components/layout/aurora-background'
+import { useTranslations } from '@/i18n/client'
 
 export default function AdminDashboardPage() {
+  const t = useTranslations('admin.dashboard')
   // Mock stats
   const stats = {
     totalVenues: 47,
@@ -36,8 +38,8 @@ export default function AdminDashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-3xl font-heading font-bold text-white mb-2">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Platform overview and management</p>
+            <h1 className="text-3xl font-heading font-bold text-white mb-2">{t('title')}</h1>
+            <p className="text-muted-foreground">{t('subtitle')}</p>
           </motion.div>
 
           {/* Stats Grid */}
@@ -50,42 +52,42 @@ export default function AdminDashboardPage() {
             <div className="glass rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Building2 className="w-4 h-4 text-primary" />
-                <p className="text-sm text-muted-foreground">Total venues</p>
+                <p className="text-sm text-muted-foreground">{t('totalVenues')}</p>
               </div>
               <p className="text-2xl font-bold text-white">{stats.totalVenues}</p>
             </div>
             <div className="glass rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="w-4 h-4 text-green-400" />
-                <p className="text-sm text-muted-foreground">Active</p>
+                <p className="text-sm text-muted-foreground">{t('active')}</p>
               </div>
               <p className="text-2xl font-bold text-green-400">{stats.activeVenues}</p>
             </div>
             <div className="glass rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <FileText className="w-4 h-4 text-primary" />
-                <p className="text-sm text-muted-foreground">All-time txns</p>
+                <p className="text-sm text-muted-foreground">{t('allTimeTxns')}</p>
               </div>
               <p className="text-2xl font-bold text-white">{stats.totalTransactions.toLocaleString()}</p>
             </div>
             <div className="glass rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <DollarSign className="w-4 h-4 text-primary" />
-                <p className="text-sm text-muted-foreground">Total volume</p>
+                <p className="text-sm text-muted-foreground">{t('totalVolume')}</p>
               </div>
               <p className="text-2xl font-bold text-primary">Rp {formatCurrency(stats.totalVolume)}</p>
             </div>
             <div className="glass rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="w-4 h-4 text-green-400" />
-                <p className="text-sm text-muted-foreground">Today</p>
+                <p className="text-sm text-muted-foreground">{t('today')}</p>
               </div>
               <p className="text-2xl font-bold text-white">{stats.todayTransactions}</p>
             </div>
             <div className="glass rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle className="w-4 h-4 text-red-400" />
-                <p className="text-sm text-muted-foreground">Failed today</p>
+                <p className="text-sm text-muted-foreground">{t('failedToday')}</p>
               </div>
               <p className="text-2xl font-bold text-red-400">{stats.failedToday}</p>
             </div>
@@ -106,10 +108,10 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-heading font-semibold text-white group-hover:text-primary transition-colors">
-                      Manage Venues
+                      {t('manageVenues')}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      View, edit, and block venues on the platform
+                      {t('manageVenuesDesc')}
                     </p>
                   </div>
                   <span className="text-2xl text-muted-foreground group-hover:text-primary transition-colors">→</span>
@@ -125,10 +127,10 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-heading font-semibold text-white group-hover:text-primary transition-colors">
-                      Transaction Logs
+                      {t('transactionLogs')}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Monitor transactions and debug payment issues
+                      {t('transactionLogsDesc')}
                     </p>
                   </div>
                   <span className="text-2xl text-muted-foreground group-hover:text-primary transition-colors">→</span>
@@ -144,10 +146,10 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-heading font-semibold text-white group-hover:text-green-400 transition-colors">
-                      Platform Commissions
+                      {t('platformCommissions')}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Revenue report and billing by venue (5% fee)
+                      {t('platformCommissionsDesc')}
                     </p>
                   </div>
                   <span className="text-2xl text-muted-foreground group-hover:text-green-400 transition-colors">→</span>

@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AuroraBackground } from "@/components/layout/aurora-background";
+import { useTranslations } from "@/i18n/client";
 import { Loader2, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 
 interface TipsByDay {
@@ -66,6 +67,8 @@ export default function StaffHistoryPage() {
   const [error, setError] = useState<string | null>(null);
   const [periodFilter, setPeriodFilter] = useState("3months");
   const [expandedPeriod, setExpandedPeriod] = useState<string | null>(null);
+  const t = useTranslations('staff.history');
+  const tc = useTranslations('common');
 
   useEffect(() => {
     fetchHistory();
@@ -111,11 +114,11 @@ export default function StaffHistoryPage() {
           className="mb-4 -ml-2"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
-          Back
+          {t('back')}
         </Button>
-        <h1 className="text-2xl font-bold">Tip history</h1>
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          See how your tips add up over weeks and payouts.
+          {t('subtitle')}
         </p>
       </header>
 
@@ -126,9 +129,9 @@ export default function StaffHistoryPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="1month">Last month</SelectItem>
-            <SelectItem value="3months">Last 3 months</SelectItem>
-            <SelectItem value="6months">Last 6 months</SelectItem>
+            <SelectItem value="1month">{t('lastMonth')}</SelectItem>
+            <SelectItem value="3months">{t('last3Months')}</SelectItem>
+            <SelectItem value="6months">{t('last6Months')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -136,12 +139,12 @@ export default function StaffHistoryPage() {
           <Card className="glass p-6 text-center">
             <p className="text-muted-foreground">{error}</p>
             <Button onClick={() => fetchHistory()} className="mt-4">
-              Try again
+              {tc('retry')}
             </Button>
           </Card>
         ) : data?.periods.length === 0 ? (
           <Card className="glass p-6 text-center">
-            <p className="text-muted-foreground">No tip history yet</p>
+            <p className="text-muted-foreground">{t('noHistory')}</p>
           </Card>
         ) : (
           <div className="space-y-3">

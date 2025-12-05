@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
 import { AuroraBackground } from '@/components/layout/aurora-background'
+import { useTranslations } from '@/i18n/client'
 
 interface Venue {
   id: string
@@ -22,6 +23,7 @@ interface Venue {
 }
 
 export default function AdminVenuesPage() {
+  const t = useTranslations('admin.venues')
   const [venues, setVenues] = useState<Venue[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -112,11 +114,11 @@ export default function AdminVenuesPage() {
   const getMidtransStatusBadge = (status: string) => {
     switch (status) {
       case 'LIVE':
-        return <Badge className="bg-green-500/20 text-green-400 border-green-500/30">🟢 Live</Badge>
+        return <Badge className="bg-green-500/20 text-green-400 border-green-500/30">🟢 {t('liveStatus')}</Badge>
       case 'TEST':
-        return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">🟡 Test</Badge>
+        return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">🟡 {t('testStatus')}</Badge>
       default:
-        return <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30">⚪ Not connected</Badge>
+        return <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30">⚪ {t('notConnected')}</Badge>
     }
   }
 
@@ -132,9 +134,9 @@ export default function AdminVenuesPage() {
           >
             <div className="flex items-center gap-3 mb-2">
               <Building2 className="w-8 h-8 text-primary" />
-              <h1 className="text-3xl font-heading font-bold text-white">Venues</h1>
+              <h1 className="text-3xl font-heading font-bold text-white">{t('title')}</h1>
             </div>
-            <p className="text-muted-foreground">Manage all registered venues on the platform</p>
+            <p className="text-muted-foreground">{t('subtitle')}</p>
           </motion.div>
 
           {/* Filters */}
@@ -148,7 +150,7 @@ export default function AdminVenuesPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name or area..."
+                  placeholder={t('searchPlaceholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-10 bg-white/5 border-white/10"
@@ -159,10 +161,10 @@ export default function AdminVenuesPage() {
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All venues</SelectItem>
-                  <SelectItem value="live">Live</SelectItem>
-                  <SelectItem value="test">Test mode</SelectItem>
-                  <SelectItem value="blocked">Blocked</SelectItem>
+                  <SelectItem value="all">{t('allVenues')}</SelectItem>
+                  <SelectItem value="live">{t('live')}</SelectItem>
+                  <SelectItem value="test">{t('testMode')}</SelectItem>
+                  <SelectItem value="blocked">{t('blocked')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -177,23 +179,23 @@ export default function AdminVenuesPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
           >
             <div className="glass rounded-xl p-4">
-              <p className="text-sm text-muted-foreground">Total venues</p>
+              <p className="text-sm text-muted-foreground">{t('allVenues')}</p>
               <p className="text-2xl font-bold text-white">{venues.length}</p>
             </div>
             <div className="glass rounded-xl p-4">
-              <p className="text-sm text-muted-foreground">Live</p>
+              <p className="text-sm text-muted-foreground">{t('live')}</p>
               <p className="text-2xl font-bold text-green-400">
                 {venues.filter(v => v.midtransStatus === 'LIVE' && v.status === 'ACTIVE').length}
               </p>
             </div>
             <div className="glass rounded-xl p-4">
-              <p className="text-sm text-muted-foreground">Test mode</p>
+              <p className="text-sm text-muted-foreground">{t('testMode')}</p>
               <p className="text-2xl font-bold text-yellow-400">
                 {venues.filter(v => v.midtransStatus === 'TEST').length}
               </p>
             </div>
             <div className="glass rounded-xl p-4">
-              <p className="text-sm text-muted-foreground">Blocked</p>
+              <p className="text-sm text-muted-foreground">{t('blocked')}</p>
               <p className="text-2xl font-bold text-red-400">
                 {venues.filter(v => v.status === 'BLOCKED').length}
               </p>
@@ -211,12 +213,12 @@ export default function AdminVenuesPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Venue</th>
-                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Midtrans</th>
-                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Total volume</th>
-                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Staff</th>
-                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Last activity</th>
-                    <th className="text-right p-4 text-sm font-medium text-muted-foreground">Actions</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('venue')}</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('midtrans')}</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('totalVolume')}</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('staffCount')}</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('lastActivity')}</th>
+                    <th className="text-right p-4 text-sm font-medium text-muted-foreground">{t('actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -252,7 +254,7 @@ export default function AdminVenuesPage() {
                           <DropdownMenuContent align="end" className="glass border-white/10">
                             <DropdownMenuItem className="cursor-pointer">
                               <ExternalLink className="w-4 h-4 mr-2" />
-                              View details
+                              {t('viewDetails')}
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               className="cursor-pointer"
@@ -261,12 +263,12 @@ export default function AdminVenuesPage() {
                               {venue.status === 'BLOCKED' ? (
                                 <>
                                   <CheckCircle className="w-4 h-4 mr-2 text-green-400" />
-                                  <span className="text-green-400">Unblock</span>
+                                  <span className="text-green-400">{t('unblock')}</span>
                                 </>
                               ) : (
                                 <>
                                   <Ban className="w-4 h-4 mr-2 text-red-400" />
-                                  <span className="text-red-400">Block</span>
+                                  <span className="text-red-400">{t('block')}</span>
                                 </>
                               )}
                             </DropdownMenuItem>

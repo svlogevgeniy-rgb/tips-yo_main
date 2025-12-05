@@ -341,7 +341,7 @@ export default function TipPage() {
               <div className="text-sm font-medium">{t("coverFee")}</div>
               <div className="text-xs text-slate-400">
                 +{formatCurrency(platformFee)} →{" "}
-                {targetStaff?.displayName || "team"} gets 100%
+                {targetStaff?.displayName || t("wholeTeam").split(" ")[0]} {t("gets100")}
               </div>
             </div>
           </label>
@@ -351,25 +351,25 @@ export default function TipPage() {
         {finalAmount > 0 && (
           <div className="rounded-xl bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 p-4">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-slate-400 text-sm">Tip</span>
+              <span className="text-slate-400 text-sm">{t("tipLabel")}</span>
               <span className="font-medium">{formatCurrency(finalAmount)}</span>
             </div>
             {coverFee && (
               <div className="flex justify-between items-center mb-2">
-                <span className="text-slate-400 text-sm">Fee covered</span>
+                <span className="text-slate-400 text-sm">{t("feeCovered")}</span>
                 <span className="font-medium text-cyan-400">
                   +{formatCurrency(platformFee)}
                 </span>
               </div>
             )}
             <div className="flex justify-between items-center pt-2 border-t border-white/10">
-              <span className="font-semibold">Total</span>
+              <span className="font-semibold">{t("totalLabel")}</span>
               <span className="text-xl font-bold text-cyan-400">
                 {formatCurrency(totalAmount)}
               </span>
             </div>
             <div className="text-xs text-slate-400 mt-2 text-center">
-              → {targetStaff?.displayName || "The Team"}
+              → {targetStaff?.displayName || t("wholeTeam").split(" ")[0]}
             </div>
           </div>
         )}
