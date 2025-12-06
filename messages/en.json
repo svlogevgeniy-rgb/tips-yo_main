@@ -1,12 +1,91 @@
 {
   "landing": {
-    "betaBadge": "Bali beta · 0% platform fee for early venues",
+    "betaBadge": "Tipsio 2.0 is here",
+    "nav": {
+      "features": "Features",
+      "howItWorks": "How it works",
+      "reviews": "Reviews"
+    },
     "hero": {
       "title": "Digital tips that actually work for Bali venues",
       "subtitle": "Guests scan a QR and leave tips in seconds. Staff see every rupiah. You stay in control — and during our Bali beta, Tipsio is free for venues (planned 5% platform fee later).",
-      "primaryCta": "Connect my venue",
+      "primaryCta": "Get started",
       "secondaryCta": "See how it works",
       "miniTrust": "Built on Midtrans. Guests can pay with GoPay, OVO, cards and Google Pay — no extra terminals, no new apps for guests."
+    },
+    "heroNew": {
+      "headline": "Tips that",
+      "highlight": "inspire growth",
+      "subheadline": "A transparent tipping platform that connects guests, staff, and management. Built for Bali's hospitality industry.",
+      "cta": "Get started free",
+      "watchDemo": "Watch demo",
+      "learnMore": "Learn more",
+      "trust1": "Secure payments via Midtrans",
+      "trust2": "Setup in under an hour",
+      "trust3": "Works with any payment method"
+    },
+    "stats": {
+      "setupTime": "Setup time",
+      "platformFee": "Platform fee for beta",
+      "transparent": "Transparent",
+      "available": "Available"
+    },
+    "howNew": {
+      "title": "Simple by design",
+      "subtitle": "Three steps to transform how your venue handles tips",
+      "step1": {
+        "title": "Connect your payments",
+        "desc": "Link your existing Midtrans account. Tips flow directly to you — we never hold your funds."
+      },
+      "step2": {
+        "title": "Guests scan and tip",
+        "desc": "Place QR codes on tables or staff badges. Guests pay with GoPay, OVO, cards, or QRIS in seconds."
+      },
+      "step3": {
+        "title": "Track and distribute",
+        "desc": "See real-time analytics. Know exactly who earned what. Settle payouts with confidence."
+      }
+    },
+    "features": {
+      "title": "Everything you need to grow",
+      "subtitle": "We've thought through every detail so you can earn more.",
+      "f1": {
+        "title": "Apple Pay & Google Pay",
+        "desc": "One-click payment. No card forms or SMS. 40% higher conversion."
+      },
+      "f2": {
+        "title": "Instant withdrawal",
+        "desc": "Money on your card in 30 seconds."
+      },
+      "f3": {
+        "title": "Analytics",
+        "desc": "Full control over your finances."
+      },
+      "f4": {
+        "title": "Smart QR codes",
+        "desc": "Generate codes for individual staff or tables. Print-ready materials included."
+      },
+      "f5": {
+        "title": "Transparency",
+        "desc": "100% of tips reach the recipient."
+      },
+      "f6": {
+        "title": "Multi-language support",
+        "desc": "Interface works in English and Indonesian. Perfect for mixed teams and international guests."
+      }
+    },
+    "forVenues": {
+      "title": "Built for venue owners who care about their team",
+      "desc": "Tipsio helps you create a fair, transparent tipping system that motivates staff and delights guests — without changing your existing payment setup.",
+      "point1": "Increase tip volume with convenient cashless payments",
+      "point2": "Reduce conflicts with clear distribution rules",
+      "point3": "Retain staff with transparent earnings tracking",
+      "point4": "Make data-driven decisions with detailed analytics"
+    },
+    "ctaNew": {
+      "title": "Ready to modernize tipping at your venue?",
+      "subtitle": "Join Bali's leading restaurants and cafes. Setup takes less than an hour.",
+      "button": "Get started free"
     },
     "forWhom": {
       "title": "One platform — three happy sides",
@@ -91,6 +170,10 @@
       "subtitle": "Connect Tipsio, start with a few tables or one shift, and see how your staff responds.",
       "primaryCta": "Connect my venue",
       "secondaryCta": "Talk to us on WhatsApp"
+    },
+    "ctaNew": {
+      "title": "Ready to get started?",
+      "subtitle": "Join Bali's leading restaurants and cafes. Setup takes less than an hour."
     },
     "footer": {
       "staffLogin": "Staff login",
