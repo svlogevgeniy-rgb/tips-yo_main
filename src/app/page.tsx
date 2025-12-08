@@ -21,6 +21,8 @@ import {
   Lock,
   Smartphone,
   CreditCard,
+  Menu,
+  X,
 } from "lucide-react";
 
 const fadeInUp = {
@@ -31,14 +33,18 @@ const fadeInUp = {
 // ============ NAVIGATION ============
 const Navigation = () => {
   const t = useTranslations("landingV3");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200/50">
-      <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-heading font-bold text-gradient">
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <Link href="/" className="text-xl sm:text-2xl font-heading font-bold text-gradient">
           Tipsio
         </Link>
-        <div className="flex items-center gap-3">
-          <a href="https://wa.me/message" className="hidden sm:flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
+        
+        {/* Desktop menu */}
+        <div className="hidden md:flex items-center gap-3">
+          <a href="https://wa.me/message" className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
             <MessageCircle size={18} />
             <span>{t("nav.support")}</span>
           </a>
@@ -53,7 +59,37 @@ const Navigation = () => {
             </Button>
           </Link>
         </div>
+        
+        {/* Mobile menu button */}
+        <div className="flex md:hidden items-center gap-2">
+          <LanguageSwitcher />
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </nav>
+      
+      {/* Mobile menu dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-3">
+          <a href="https://wa.me/message" className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors py-2">
+            <MessageCircle size={18} />
+            <span>{t("nav.support")}</span>
+          </a>
+          <Link href="/venue/login" className="block" onClick={() => setMobileMenuOpen(false)}>
+            <Button variant="ghost" size="sm" className="w-full justify-start text-slate-700">{t("nav.login")}</Button>
+          </Link>
+          <Link href="/venue/register" className="block" onClick={() => setMobileMenuOpen(false)}>
+            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full">
+              {t("nav.cta")}
+              <ArrowRight className="ml-1 w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
+      )}
     </header>
   );
 };
