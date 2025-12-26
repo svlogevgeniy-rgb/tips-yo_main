@@ -13,6 +13,11 @@
       "headlineHighlight": "tamu tidak punya uang tunai",
       "subheadline": "Terima tip tanpa tunai melalui Google Pay, GoPay atau kartu bank. Uang langsung masuk ke rekening Anda berkat TIPSIO.",
       "cta": "Mulai gratis dalam 1 jam",
+      "ctaPrimary": "Hubungkan tempat usaha",
+      "ctaSecondary": "Berikan tip atau ulasan",
+      "dialogTitle": "Selamat datang!",
+      "dialogDescription": "Untuk memberikan tip atau ulasan, masukkan kode staf",
+      "dialogSubmit": "Lanjutkan",
       "trust1": "Pembayaran langsung (tanpa perantara)",
       "trust2": "Tamu tidak perlu aplikasi",
       "imageAlt": "Antarmuka platform tip digital TIPSIO menampilkan staf dan opsi pembayaran"

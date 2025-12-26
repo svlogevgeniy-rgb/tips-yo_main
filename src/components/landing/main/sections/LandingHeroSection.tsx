@@ -59,7 +59,7 @@ export function LandingHeroSection() {
                 variant="default"
                 className="h-14 px-8 text-base rounded-[10px] shadow-lg bg-slate-900 hover:bg-blue-600 text-white min-w-[220px]"
               >
-                Подключить заведение
+                {t('hero.ctaPrimary')}
               </Button>
             </Link>
             <Button
@@ -67,7 +67,7 @@ export function LandingHeroSection() {
               className="h-14 px-8 text-base rounded-[10px] border-slate-300 hover:bg-blue-600 hover:text-white hover:border-blue-600 min-w-[220px]"
               onClick={() => setIsDialogOpen(true)}
             >
-              Оставить чаевые или отзыв
+              {t('hero.ctaSecondary')}
             </Button>
           </div>
         </div>
@@ -78,10 +78,10 @@ export function LandingHeroSection() {
         <DialogContent className="sm:max-w-md rounded-[10px]">
           <DialogHeader className="text-center sm:text-center">
             <DialogTitle className="text-2xl sm:text-3xl font-heading font-bold">
-              Добро пожаловать!
+              {t('hero.dialogTitle')}
             </DialogTitle>
             <DialogDescription className="text-base mt-2">
-              Чтобы оставить чаевые или отзыв, введите код персонала
+              {t('hero.dialogDescription')}
             </DialogDescription>
           </DialogHeader>
 
@@ -99,7 +99,7 @@ export function LandingHeroSection() {
               className="w-full h-14 text-base rounded-[10px] bg-blue-600 hover:bg-blue-700 text-white"
               disabled={!staffCode.trim()}
             >
-              Продолжить
+              {t('hero.dialogSubmit')}
             </Button>
           </form>
         </DialogContent>

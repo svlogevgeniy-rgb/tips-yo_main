@@ -13,6 +13,11 @@
       "headlineHighlight": "people work with\u00A0people",
       "subheadline": "Free to connect. More convenient for your guests, easier for your staff.",
       "cta": "Launch free in 1 hour",
+      "ctaPrimary": "Connect venue",
+      "ctaSecondary": "Leave tip or review",
+      "dialogTitle": "Welcome!",
+      "dialogDescription": "To leave a tip or review, enter staff code",
+      "dialogSubmit": "Continue",
       "imageAlt": "TIPSIO digital tipping platform interface showing staff and payment options"
     },
     "dashboard": {
